@@ -1,0 +1,28 @@
+export type RecordItem = {
+  id: number;
+  userid: string;
+  created_on: string;
+  submitted_on: string;
+  updated_on: string;
+  customer_name: string;
+  purpose_of_visit: string;
+  machine_model: string;
+  machine_serial: string;
+  complaint_dtls: string;
+  service_type: string;
+  travel_from: string;
+  travel_to: string;
+  mode_of_travel:string;
+  ticket_status:string;
+  cancel_reason:string;
+  visiting_role:string;
+  team_members:string;
+  prim_tourid:string;
+  tour_start_date:string;
+  tour_end_date:string;
+  tour_continue:string;
+  tour_continue_date:string;
+  mgr_remarks:string;
+  auto_close:string;
+  gps: string;
+};
