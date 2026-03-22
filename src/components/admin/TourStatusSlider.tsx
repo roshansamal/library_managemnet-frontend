@@ -12,7 +12,6 @@ import {
   Input,
   Stack,
   useToast,
-  Select as ChakraSelect,
 } from '@chakra-ui/react';
 import { useCallback, useEffect, useState } from 'react';  // ✅ Added useCallback
 import type { TourMasterType } from '../../types/TourMasterType';
@@ -70,7 +69,17 @@ export default function TourStatusSlider({
 
   const fetchStatus = useCallback(async (): Promise<SelectOption[]> => {
     try {
-      const res = await fetch("/api/tourbill/admin/tourstatus");
+      const token = localStorage.getItem('authToken');
+      // const res = await fetch("/api/touradmin/tourstatus");
+      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+      const res = await fetch(`${apiUrl}/touradmin/tourstatus`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+          'Accept': 'application/json',
+        },
+      });
+      //-----------------------------------
       if (!res.ok) throw new Error('Failed to fetch');
       const json = await res.json();
       return json.map((c: any) => ({
@@ -134,12 +143,18 @@ export default function TourStatusSlider({
     try {
       setIsSubmitting(true);
       console.log(JSON.stringify(form));
-      const endpoint = '/api/tourbill/admin/tour-status-update';
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      
+      const token = localStorage.getItem('authToken');
+      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+      const res = await fetch(`${apiUrl}/touradmin/tour-status-update`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+          'Accept': 'application/json',
+        },
         body: JSON.stringify(form),
       });
+
       if (!res.ok) {
         throw new Error('Failed to update tour status');
       }

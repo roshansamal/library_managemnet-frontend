@@ -12,7 +12,7 @@ import {
   FormLabel,
   Input,
   Stack,
-  useToast,
+  // useToast,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
@@ -30,13 +30,13 @@ export default function MgrBillApprovalSlider({
   isOpen,
   onClose,
   initialData,
-  onUpdated,
+  // onUpdated,
 }: EditSliderProps) {
-  const toast = useToast();
+  // const toast = useToast();
 
   // Local form state
   const [form, setForm] = useState<TourbillRecord | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Whenever initialData changes (or slider opens), populate form
   useEffect(() => {
@@ -55,49 +55,49 @@ export default function MgrBillApprovalSlider({
     });
   };
 
-  const handleSubmit = async () => {
-    if (!form) return;
+  // const handleSubmit = async () => {
+  //   if (!form) return;
 
-    try {
-      setIsSubmitting(true);
+  //   try {
+  //     setIsSubmitting(true);
 
-      // Example: call your API to update record
-      // Replace URL and payload with your Laravel/Node endpoint
-      const res = await fetch(`/api/tours/${form.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(form),
-      });
+  //     // Example: call your API to update record
+  //     // Replace URL and payload with your Laravel/Node endpoint
+  //     const res = await fetch(`/api/tours/${form.id}`, {
+  //       method: 'PUT',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(form),
+  //     });
 
-      if (!res.ok) {
-        throw new Error('Failed to update record');
-      }
+  //     if (!res.ok) {
+  //       throw new Error('Failed to update record');
+  //     }
 
-      toast({
-        title: 'Updated successfully',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
+  //     toast({
+  //       title: 'Updated successfully',
+  //       status: 'success',
+  //       duration: 3000,
+  //       isClosable: true,
+  //     });
 
-      // Inform parent to refresh table
-      onUpdated && onUpdated();
+  //     // Inform parent to refresh table
+  //     onUpdated && onUpdated();
 
-      onClose();
-    } catch (err: any) {
-      toast({
-        title: 'Update failed',
-        description: err?.message || 'Something went wrong',
-        status: 'error',
-        duration: 4000,
-        isClosable: true,
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  //     onClose();
+  //   } catch (err: any) {
+  //     toast({
+  //       title: 'Update failed',
+  //       description: err?.message || 'Something went wrong',
+  //       status: 'error',
+  //       duration: 4000,
+  //       isClosable: true,
+  //     });
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
 
   return (
     <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="md">

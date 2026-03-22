@@ -32,7 +32,7 @@ export default function MgrTourBillApprovalSlider({
 
   // Local form state
   const [form, setForm] = useState<TourbillColumns | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   //------------------------------------------
   // fetch Tour Details when drawer opens and we have an id
@@ -57,7 +57,8 @@ export default function MgrTourBillApprovalSlider({
     if (!form) return;
     try {
       setIsSubmitting(true);
-      const res = await fetch(`/api/tourbill/mgr-bill-approve`, {
+      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+      const res = await fetch(`${apiUrl}/api/tourbill/mgr-bill-approve`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

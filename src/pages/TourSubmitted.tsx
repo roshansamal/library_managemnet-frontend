@@ -1,15 +1,14 @@
 // src/pages/FilteredTablePage.tsx
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/react';
+//import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/react';
 import {
   Select,
-  useDisclosure,
+  // useDisclosure,
 } from '@chakra-ui/react';
 import { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Button,
   HStack,
-  Input,
   Table,
   Thead,
   Tbody,
@@ -27,11 +26,11 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   useReactTable,
-  type Row,
+  // type Row,
   type SortingState,
 } from '@tanstack/react-table';
-import { FiChevronLeft, FiChevronRight, FiEdit, FiEye } from 'react-icons/fi';
-import { FaCheck, FaCheckDouble, FaFileCsv, FaFileExcel, FaFilePdf, FaFilter, FaLocationDot } from 'react-icons/fa6';
+import { FiChevronLeft, FiChevronRight, FiEye } from 'react-icons/fi';
+import { FaCheck, FaFileCsv, FaFileExcel, FaFilePdf, FaFilter, FaLocationDot } from 'react-icons/fa6';
 import { useToast } from '@chakra-ui/react';
 // import { MdOutlineApproval } from 'react-icons/md';
 // import { FcApproval } from 'react-icons/fc';
@@ -46,50 +45,50 @@ type ApiResponse = {
 };
 
 const columnHelper = createColumnHelper<TourMasterType>();
-import { FaDownload, FaUndo } from 'react-icons/fa';
+import {  FaUndo } from 'react-icons/fa';
 import ViewGpsSlider from '../components/ViewGpsSlider';
-import ViewTourBillSlider from '../components/ViewTourBillSlider';
-import ViewTourDetailsSlider from '../components/ViewTourDetailsSlider';
-import MgrTourBillApprovalSlider from '../components/MgrTourBillApprovalSlider';
-import MgrTourBillReturnSlider from '../components/MgrTourBillReturnSlider';
+// import ViewTourBillSlider from '../components/ViewTourBillSlider';
+// import ViewTourDetailsSlider from '../components/ViewTourDetailsSlider';
+// import MgrTourBillApprovalSlider from '../components/MgrTourBillApprovalSlider';
+// import MgrTourBillReturnSlider from '../components/MgrTourBillReturnSlider';
 import type { TourMasterType } from '../types/TourMasterType';
 
 export default function TourSubmitted() {
   const toast = useToast();
-  const [rows, setRows] = useState<TourMasterType[]>([]);
+  // const [rows, setRows] = useState<TourMasterType[]>([]);
   type UserOption = { userid: string };
   const [users, setUsers] = useState<UserOption[]>([]);
   const [selectedUser, setSelectedUser] = useState('');
-  const [username, setUsername] = useState('');
+  // const [username, setUsername] = useState('');
   // Used for Side Drawer Start
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [editingRow, setEditingRow] = useState<TourMasterType | null>(null);
-  const [reloadKey, setReloadKey] = useState(0); //For Forcing Screen Update
+  // const { isOpen, onOpen, onClose } = useDisclosure();
+  // const [editingRow, setEditingRow] = useState<TourMasterType | null>(null);
+  // const [reloadKey, setReloadKey] = useState(0); //For Forcing Screen Update
   //--------------------------------
   //Used for Edit Slide Drawer
   const [selectedRow, setSelectedRow] = useState<TourMasterType | null>(null);
-  const [isTourEditOpen, setIsTourEditOpen] = useState(false);
+  // const [isTourEditOpen, setIsTourEditOpen] = useState(false);
   const openTourEdit = (row: TourMasterType) => {
     setSelectedRow(row);
-    setIsTourEditOpen(true);
+    // setIsTourEditOpen(true);
   };
-  const closeTourEdit = () => {
-    setIsTourEditOpen(false);
-    setSelectedRow(null);
-  };
+  // const closeTourEdit = () => {
+  //   // setIsTourEditOpen(false);
+  //   setSelectedRow(null);
+  // };
   function fetchDataAgain(): void {
     handleFetch();
   }
   //---Tour View Slider Begin Here-----------------------------
-  const [isTourViewOpen, setIsTourViewOpen] = useState(false);
+  // const [isTourViewOpen, setIsTourViewOpen] = useState(false);
   const openTourView = (row: TourMasterType) => {
     setSelectedRow(row);
-    setIsTourViewOpen(true);
+    // setIsTourViewOpen(true);
   };
-  const closeTourView = () => {
-    setIsTourViewOpen(false);
-    setSelectedRow(null);
-  };
+  // const closeTourView = () => {
+  //   setIsTourViewOpen(false);
+  //   setSelectedRow(null);
+  // };
   //---Tour View Slider Ends Here-----------------------------
   //---Tour Gps Slider Begin Here-----------------------------
   const [isTourGpsOpen, setIsTourGpsOpen] = useState(false);
@@ -103,25 +102,27 @@ export default function TourSubmitted() {
   };
   //---Tour Gps Slider Ends Here-----------------------------
   //---Tour Approval Slider Begin Here-----------------------------
-  const [isTourApprovalOpen, setIsTourApprovalOpen] = useState(false);
-  const [isBillApprovalOpen, setIsBillApprovalOpen] = useState(false);
-  const [isBillReturnOpen, setIsBillReturnOpen] = useState(false);
+  //const [isTourApprovalOpen, setIsTourApprovalOpen] = useState(false);
+  const [, setIsTourApprovalOpen] = useState(false);
+  //const [isBillApprovalOpen, setIsBillApprovalOpen] = useState(false);
+  //const [isBillReturnOpen, setIsBillReturnOpen] = useState(false);
+  const [, setIsBillReturnOpen] = useState(false);
   const openTourApproval = (row: TourMasterType) => {
     setSelectedRow(row);
     setIsTourApprovalOpen(true);
   };
-  const closeBillApproval = () => {
-    setIsBillApprovalOpen(false);
-    setSelectedRow(null);
-  };
+  // const closeBillApproval = () => {
+  //   setIsBillApprovalOpen(false);
+  //   setSelectedRow(null);
+  // };
   const openBillReturn = (row: TourMasterType) => {
     setSelectedRow(row);
     setIsBillReturnOpen(true);
   };
-   const closeBillReturn = () => {
-    setIsBillReturnOpen(false);
-    setSelectedRow(null);
-  };
+  //  const closeBillReturn = () => {
+  //   setIsBillReturnOpen(false);
+  //   setSelectedRow(null);
+  // };
   //---Tour Approval Slider Ends Here-----------------------------
 
   const handleApproveSelected = async () => {
@@ -133,7 +134,8 @@ export default function TourSubmitted() {
       );
       if (!ok) return;
       //console.log(selectedIds);
-      const res = await fetch('/api/tourbill/mgr-bulk-tour-approval', {
+      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+      const res = await fetch(`${apiUrl}/api/tourbill/mgr-bulk-tour-approval`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -156,7 +158,7 @@ export default function TourSubmitted() {
       // simplest: just reset pageIndex or bump a reload counter
       setPageIndex(0); // triggers useEffect fetch because dependency
       setSelectedIds([]);
-      setReloadKey((k) => k + 1); // forces useEffect to run
+      // setReloadKey((k) => k + 1); // forces useEffect to run
       fetchDataAgain();
     } catch (err) {
       //console.error(err);
@@ -173,10 +175,10 @@ export default function TourSubmitted() {
   //   setIsTourViewOpen(true);
   //   onOpen();
   // };
-  const handleReturnClick = (row: TourMasterType) => {
-    setEditingRow(row);
-    onOpen();
-  };
+  // const handleReturnClick = (row: TourMasterType) => {
+  //   setEditingRow(row);
+  //   onOpen();
+  // };
 
   // Used for Side Drawer End
   // const [appliedFilters, setAppliedFilters] = useState({
@@ -192,11 +194,11 @@ export default function TourSubmitted() {
 
   // ---- Row selector state ----
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const allSelected = data.length > 0 && selectedIds.length === data.length;
+  const allSelected = 1;//data.length > 0 && selectedIds.length === data.length;
   const isSelected = (tourid: number) => selectedIds.includes(tourid);
   const toggleAll = () => {
     //setSelectedIds(allSelected ? [] : data.map((r) => r.id));
-    setSelectedIds(allSelected ? [] : data.map((r) => r.id));
+    //setSelectedIds(allSelected ? [] : data.map((r) => r.id));
   };
   const toggleOne = (tourid: number) => {
     setSelectedIds((prev) =>
@@ -277,7 +279,16 @@ export default function TourSubmitted() {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const res = await fetch('/api/tourbill/tour-submitted-by');
+      const token = localStorage.getItem('authToken');
+      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+      const res = await fetch(`${apiUrl}/api/touradmin/tour-submitted-by`,{
+        method: 'GET',
+          credentials: 'include',
+          headers: {
+          'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+      }});
       const json: UserOption[] = await res.json();
       setUsers(json);
     };
@@ -292,7 +303,7 @@ export default function TourSubmitted() {
         header: () => (
           <input
             type="checkbox"
-            checked={allSelected}
+            //checked={allSelected}
             onChange={toggleAll}
           />
         ),
@@ -473,19 +484,27 @@ export default function TourSubmitted() {
   const pageCount = Math.max(Math.ceil(total / pageSize), 1);
   const canPrev = pageIndex > 0;
   const canNext = pageIndex < pageCount - 1;
+  const params = new URLSearchParams({
+    // page: (pagination.pageIndex + 1).toString(),
+    // per_page: pagination.pageSize.toString(),
+    search:selectedUser,
+  });
 
   const handleFetch = async () => {
   try {
     setIsLoading(true);
-    //console.log('Info:',selectedUser);
-    const res = await fetch('/api/tourbill/toursubmitted', {
-        method: 'POST',
+    const token = localStorage.getItem('authToken');
+    const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+    const res = await fetch(`${apiUrl}/api/touradmin/tour-submitted-by?${params}`, {
+        method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          search: selectedUser,
-        }),
+        // body: JSON.stringify({
+        //   search: selectedUser,
+        // }),
       });
     if (!res.ok) {
       console.error('Error:', res.status, await res.text());

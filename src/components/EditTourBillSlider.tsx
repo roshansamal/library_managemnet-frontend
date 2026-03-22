@@ -59,7 +59,8 @@ export default function EditTourBillSlider({
     if (!form) return;
     try {
       setIsSubmitting(true);
-      const res = await fetch(`/api/tours/${form.id}`, {
+      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+      const res = await fetch(`${apiUrl}/api/tours/${form.id}/dtls`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

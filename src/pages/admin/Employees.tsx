@@ -1,15 +1,15 @@
 // src/pages/FilteredTablePage.tsx
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, Link, Table } from '@chakra-ui/react';
-import {
-  Select,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Link, Table } from '@chakra-ui/react';
+// import {
+//   Select,
+//   useDisclosure,
+// } from '@chakra-ui/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Button,
   HStack,
-  Input,
+  // Input,
   Thead,
   Tbody,
   Tr,
@@ -23,14 +23,14 @@ import {
 import {
   createColumnHelper,
   flexRender,
-  type PaginationState,
-  type Row,
-  type RowModel,
-  type SortingState,
-  type Updater,
+  // type PaginationState,
+  // type Row,
+  // type RowModel,
+  // type SortingState,
+  // type Updater,
 } from '@tanstack/react-table';
-import { FiChevronLeft, FiChevronRight, FiDelete, FiEdit, FiEye } from 'react-icons/fi';
-import { FaCheck, FaCheckDouble, FaCross, FaFilter, FaLocationDot, FaRecycle, FaTrash } from 'react-icons/fa6';
+import { FiChevronLeft, FiChevronRight, FiEdit,  } from 'react-icons/fi';
+import {  FaRecycle, FaTrash } from 'react-icons/fa6';
 import { useToast } from '@chakra-ui/react';
 import type { EmployeeType } from '../../types/EmployeeType';
 import { FaPlusCircle } from 'react-icons/fa';
@@ -43,35 +43,36 @@ import {
   getCoreRowModel,     // ✅ Always required
   getPaginationRowModel,
 } from '@tanstack/react-table';
-import axios from 'axios';
+// import axios from 'axios';
 
-type ApiResponse = {
-  data: EmployeeType[];
-  current_page: number;
-  per_page: number;
-  total: number;
-};
+// type ApiResponse = {
+//   data: EmployeeType[];
+//   current_page: number;
+//   per_page: number;
+//   total: number;
+// };
 
 const columnHelper = createColumnHelper<EmployeeType>();
 
 export default function Employees() {
-  const [sorting, setSorting] = useState<SortingState>([]);
+  // const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedRow, setSelectedRow] = useState<EmployeeType | null>(null);
-  const [users, setUsers] = useState<UserOption[]>([]);
-  const [username, setUsername] = useState('');
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  // const [users, setUsers] = useState<UserOption[]>([]);
+  // const [username, setUsername] = useState('');
+  const [selectedIds] = useState<number[]>([]);
   // const allSelected = data.length > 0 && selectedIds.length === data.length;
   const isSelected = (tourid: number) => selectedIds.includes(tourid);
-  const [isViewEmpOpen, setIsViewEmpOpen] = useState(false);
+  // const [isViewEmpOpen, setIsViewEmpOpen] = useState(false);
   const [isEmpAddOpen, setIsEmpAddOpen] = useState(false);
   const [isEmpEditOpen, setIsEmpEditOpen] = useState(false);
-  const [isEmpAddClose, setIsEmpAddClose] = useState(false);
-  const [isEmpEditClose, setIsEmpEditClose] = useState(false);
+  // const [isEmpAddClose, setIsEmpAddClose] = useState(false);
+  // const [isEmpEditClose,setIsEmpEditClose] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [rowToDelete, setRowToDelete] = useState<EmployeeType | null>(null);
   const toast = useToast();
-
-  
+  const token = localStorage.getItem('authToken');
+  const pageSize = 10;
+    
   // ✅ Single pagination state (remove old pageIndex/pageSize)
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
   const [data, setData] = useState<EmployeeType[]>([]);
@@ -79,21 +80,21 @@ export default function Employees() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Type Declaration
-  type UserOption = { userid: string };
+  // type UserOption = { userid: string };
 
-  const closeEditEmpSlider = () => {
-    setIsEmpEditClose(true);
-    setIsEmpEditOpen(false);
-    setSelectedRow(null);
-  };
+  // const closeEditEmpSlider = () => {
+  //   setIsEmpEditClose(true);
+  //   setIsEmpEditOpen(false);
+  //   setSelectedRow(null);
+  // };
   function fetchDataAgain(): void {
     handleFetch();
   }
   // Emp Add
-  const openEmpAdd = (row: EmployeeType) => {
-    setSelectedRow(row);
-    setIsEmpAddOpen(true);
-  };
+  // const openEmpAdd = (row: EmployeeType) => {
+  //   setSelectedRow(row);
+  //   setIsEmpAddOpen(true);
+  // };
   const closeEmpAdd = () => {
     setSelectedRow(null);
     setIsEmpAddOpen(false);
@@ -259,8 +260,8 @@ const table = useReactTable({
   manualPagination: true,
   pageCount: total ? Math.ceil(total / pagination.pageSize) : -1,
 });
-  const { pageIndex, pageSize } = table.getState().pagination;
-  const pageCount = Math.max(Math.ceil(total / pageSize), 1);
+  // const { pageIndex, pageSize } = table.getState().pagination;
+  // const pageCount = Math.max(Math.ceil(total / pageSize), 1);
   // const canPrev = pageIndex > 0;
   // const canNext = pageIndex < pageCount - 1;
   // ✅ Table-controlled buttons (REPLACE your manual ones)
@@ -279,6 +280,8 @@ const table = useReactTable({
     }
   }
 
+
+
   // ✅ Fetch current page
 const handleFetch = useCallback(async () => {
   console.log('Fetching page:', pagination.pageIndex + 1);
@@ -287,7 +290,17 @@ const handleFetch = useCallback(async () => {
     page: (pagination.pageIndex + 1).toString(),
     per_page: pagination.pageSize.toString(),
   });
-  const res = await fetch(`/api/touradmin/emp/emplist?${params}`);
+
+  const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+  const res = await fetch(`${apiUrl}/api/touradmin/emp/emplist?${params}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+      'Accept': 'application/json',
+    },
+  });
+
+
   if (!res.ok) throw new Error(await res.text());
   const json = await res.json();
   setData(json.data);
@@ -296,9 +309,12 @@ const handleFetch = useCallback(async () => {
 }, [pagination.pageIndex, pagination.pageSize]);
 
 
+// useEffect(() => {
+//   handleFetch();
+// }, [handleFetch]);
 useEffect(() => {
   handleFetch();
-}, [handleFetch]);
+}, []);
 
 // ✅ Table-controlled buttons (REPLACE your manual ones)
 // const canPrev = table.getCanPreviousPage();
@@ -307,8 +323,14 @@ useEffect(() => {
   const handleDeleteConfirm = async () => {
     if (!rowToDelete) return;
     try {
-      const res = await fetch(`/api/tourbill/admin/empdelete/${rowToDelete.id}`, {
+      const token = localStorage.getItem('authToken');
+      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+      const res = await fetch(`${apiUrl}/touradmin/empdelete/${rowToDelete.id}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+          'Accept': 'application/json',
+        },
         credentials: 'include',
       });
       if (!res.ok) {

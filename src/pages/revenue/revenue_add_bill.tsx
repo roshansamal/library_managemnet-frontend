@@ -1,33 +1,33 @@
 // src/pages/FilteredTablePage.tsx
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, TableContainer } from '@chakra-ui/react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink,  } from '@chakra-ui/react';
+import { useCallback, useEffect, useState } from 'react';
+// import {
+//   Box,
+//   Button,
+//   HStack,
+//   Table,
+//   Thead,
+//   Tbody,
+//   Tr,
+//   Th,
+//   Td,
+//   Tfoot,
+//   IconButton,
+//   Text,
+//   Select as ChakraSelect,
+// } from '@chakra-ui/react';
 import {
-  Box,
-  Button,
-  HStack,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  Tfoot,
-  IconButton,
-  Text,
-  Select as ChakraSelect,
-} from '@chakra-ui/react';
-import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type SortingState,
+  // createColumnHelper,
+  // flexRender,
+  // getCoreRowModel,
+  // getSortedRowModel,
+  // useReactTable,
+  // type SortingState,
 } from '@tanstack/react-table';
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
-import { FaFileCsv, FaFileExcel, FaFilePdf } from 'react-icons/fa6';
+// import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+// import { FaFileCsv, FaFileExcel, FaFilePdf } from 'react-icons/fa6';
 import { ChevronRightIcon } from '@chakra-ui/icons/ChevronRight';
-import TableLoader from '../../components/TableLoader';
+// import TableLoader from '../../components/TableLoader';
 import type { MachineMasterType } from '../../types/MachineMasterType';
 
 type ApiResponse = {
@@ -37,25 +37,25 @@ type ApiResponse = {
   total: number;
 };
 
-const columnHelper = createColumnHelper<MachineMasterType>();
+// const columnHelper = createColumnHelper<MachineMasterType>();
 
 export default function RevenueAddBill() {
   // const [fromDate, setFromDate] = useState('');
   // const [toDate, setToDate] = useState('');
-  const [sorting, setSorting] = useState<SortingState>([]);
+  // const [sorting, setSorting] = useState<SortingState>([]);
   const [data, setData] = useState<MachineMasterType[]>([]);
-  const [pageIndex, setPageIndex] = useState(0); // zero-based
-  const [pageSize, setPageSize] = useState(10);
-  const [total, setTotal] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
-  const [agingHours, setAgingHours] = useState<'0-5000'|'5001-10000'|'10001-15000'|'15001-20000'|'20000'>('0-5000');
+  // const [pageIndex, setPageIndex] = useState(0); // zero-based
+  // const [pageSize, setPageSize] = useState(10);
+  // const [total, setTotal] = useState(0);
+  // const [isLoading, setIsLoading] = useState(false);
+   const [agingHours,] = useState<'0-5000'|'5001-10000'|'10001-15000'|'15001-20000'|'20000'>('0-5000');
   //const [agingHours, setAgingHours] = useState<5000|10000|15000|20000>(5000);
 
   // ✅ FIXED: Stable fetch function with useCallback
   const handleFetch = useCallback(async (page: number, size: number) => {
-    setIsLoading(true);
+    // setIsLoading(true);
     try {
-      console.log("Aging Hours",agingHours);
+      // console.log("Aging Hours",agingHours);
       const res = await fetch('/api/tourbill/machine-aging-report', {
         method: 'POST',
         credentials: 'include',
@@ -63,7 +63,7 @@ export default function RevenueAddBill() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          'aging_hours':agingHours,
+          'aging_hours':20,//agingHours,
           'page': page + 1, // Laravel uses 1-based pages
           'per_page': size 
         }),
@@ -75,168 +75,170 @@ export default function RevenueAddBill() {
       }
       const json: ApiResponse = await res.json();
       setData(json.data);
-      setTotal(json.total);
+      console.log(data);
+      // setTotal(json.total);
     } catch (e) {
       console.error('Fetch failed:', e);
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   }, [agingHours]); // ✅ Dependencies included
 
   // ✅ FIXED: Stable event handlers - NO inline calls!
-  const handleApplyFilters = useCallback(() => {
-    handleFetch(0, pageSize);
-  }, [handleFetch, pageSize,agingHours]);
+  // const handleApplyFilters = useCallback(() => {
+  //   handleFetch(0, pageSize);
+  // }, [handleFetch, pageSize,agingHours]);
 
-  const handlePrevPage = useCallback(() => {
-    if (pageIndex > 0) {
-      const newPage = pageIndex - 1;
-      setPageIndex(newPage);
-      handleFetch(newPage, pageSize);
-    }
-  }, [pageIndex, pageSize, handleFetch]);
+  // const handlePrevPage = useCallback(() => {
+  //   if (pageIndex > 0) {
+  //     const newPage = pageIndex - 1;
+  //     setPageIndex(newPage);
+  //     handleFetch(newPage, pageSize);
+  //   }
+  // }, [pageIndex, pageSize, handleFetch]);
 
-  const handleNextPage = useCallback(() => {
-    const pageCount = Math.ceil(total / pageSize);
-    if (pageIndex < pageCount - 1) {
-      const newPage = pageIndex + 1;
-      setPageIndex(newPage);
-      handleFetch(newPage, pageSize);
-    }
-  }, [pageIndex, pageSize, total, handleFetch]);
+  // const handleNextPage = useCallback(() => {
+  //   const pageCount = Math.ceil(total / pageSize);
+  //   if (pageIndex < pageCount - 1) {
+  //     const newPage = pageIndex + 1;
+  //     setPageIndex(newPage);
+  //     handleFetch(newPage, pageSize);
+  //   }
+  // }, [pageIndex, pageSize, total, handleFetch]);
 
-  const handlePageSizeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newSize = Number(e.target.value);
-    setPageSize(newSize);
-    setPageIndex(0); // Reset to first page
-    handleFetch(0, newSize);
-  }, [handleFetch]);
+  // const handlePageSizeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+  //   const newSize = Number(e.target.value);
+  //   setPageSize(newSize);
+  //   setPageIndex(0); // Reset to first page
+  //   handleFetch(0, newSize);
+  // }, [handleFetch]);
 
   // ✅ Load initial data on mount
   useEffect(() => {
-    handleFetch(0, pageSize);
+    //handleFetch(0, pageSize);
+    handleFetch(0, 10);
   }, []); // Empty deps = only on mount
 
   // ✅ FIXED: Serial number calculation - stable
-  const getSerialNo = useCallback((rowIndex: number) => {
-    return (pageIndex * pageSize) + rowIndex + 1;
-  }, [pageIndex, pageSize]);
+  // const getSerialNo = useCallback((rowIndex: number) => {
+  //   return (pageIndex * pageSize) + rowIndex + 1;
+  // }, [pageIndex, pageSize]);
 
-  const columns = useMemo(
-    () => [
-      columnHelper.display({
-        id: 'serial',
-        header: 'SL',
-        cell: ({ row }) => {
-          if (data.length === 0) return null;
-          return getSerialNo(row.index);
-        },
-      }),
-      columnHelper.accessor('machine_brand', {
-        header: 'Machine Brand',
-        cell: (info) => info.getValue() as string,
-      }),
-      columnHelper.accessor('product_type', {
-        header: 'Machine Type',
-        cell: (info) => `${info.getValue()}`,
-      }),
-      columnHelper.accessor('machine_model', {
-        header: 'Machine Model',
-        cell: (info) => `${info.getValue()}`,
-      }),
-      columnHelper.accessor('machine_serial', {
-        header: 'Machine Serial',
-        cell: (info) => `${info.getValue()}`,
-      }),
-      columnHelper.accessor('hmr', {
-        header: 'HMR',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('hmr_date', {
-        header: 'HMR Date',
-        cell: (info) => info.getValue() as string,
-      }),
-      columnHelper.accessor('machine_location', {
-        header: 'Machine Location',
-        cell: (info) => info.getValue() as string,
-      }),
-      columnHelper.accessor('doc', {
-        header: 'DOC',
-        cell: (info) => info.getValue() as string,
-      }),
-      columnHelper.accessor('engine_model', {
-        header: 'Engine Model',
-        cell: (info) => info.getValue() as string,
-      }),
-      columnHelper.accessor('engine_serial', {
-        header: 'Engine Serial',
-        cell: (info) => info.getValue() as string,
-      }),
-      columnHelper.accessor('customer_name', {
-        header: 'Customer',
-        cell: (info) => info.getValue() as string,
-      }),
-      columnHelper.accessor('sales_dealer', {
-        header: 'Sales Dealer',
-        cell: (info) => info.getValue() as string,
-      }),
-      columnHelper.accessor('service_dealer', {
-        header: 'Service Dealer',
-        cell: (info) => info.getValue() as string,
-      }),
-      columnHelper.accessor('warranty_status', {
-        header: 'Warranty Status',
-        cell: (info) => info.getValue() as string,
-      }),
-      columnHelper.accessor('warranty_type_code', {
-        header: 'Warranty Code',
-        cell: (info) => info.getValue() as string,
-      }),
-      columnHelper.accessor('rma_type', {
-        header: 'RMA Type',
-        cell: (info) => info.getValue() as string,
-      }),
-      columnHelper.accessor('contact_person', {
-        header: 'Contact Person',
-        cell: (info) => info.getValue() as string,
-      }),
-      columnHelper.accessor('contact_person_no', {
-        header: 'Contact Phone',
-        cell: (info) => info.getValue() as string,
-      }),
-      columnHelper.accessor('contact_person_email', {
-        header: 'Contact Mail',
-        cell: (info) => info.getValue() as string,
-      }),
-      columnHelper.accessor('caretrack_activated', {
-        header: 'Care Track',
-        cell: (info) => info.getValue() as string,
-      }),
-      columnHelper.accessor('csa_type', {
-        header: 'CSA',
-        cell: (info) => info.getValue() as string,
-      }),
-    ],
-    [getSerialNo] // ✅ Stable dependency
-  );
+  // const columns = useMemo(
+  //   () => [
+  //     columnHelper.display({
+  //       id: 'serial',
+  //       header: 'SL',
+  //       cell: ({ row }) => {
+  //         if (data.length === 0) return null;
+  //         return getSerialNo(row.index);
+  //       },
+  //     }),
+  //     columnHelper.accessor('machine_brand', {
+  //       header: 'Machine Brand',
+  //       cell: (info) => info.getValue() as string,
+  //     }),
+  //     columnHelper.accessor('product_type', {
+  //       header: 'Machine Type',
+  //       cell: (info) => `${info.getValue()}`,
+  //     }),
+  //     columnHelper.accessor('machine_model', {
+  //       header: 'Machine Model',
+  //       cell: (info) => `${info.getValue()}`,
+  //     }),
+  //     columnHelper.accessor('machine_serial', {
+  //       header: 'Machine Serial',
+  //       cell: (info) => `${info.getValue()}`,
+  //     }),
+  //     columnHelper.accessor('hmr', {
+  //       header: 'HMR',
+  //       cell: (info) => info.getValue(),
+  //     }),
+  //     columnHelper.accessor('hmr_date', {
+  //       header: 'HMR Date',
+  //       cell: (info) => info.getValue() as string,
+  //     }),
+  //     columnHelper.accessor('machine_location', {
+  //       header: 'Machine Location',
+  //       cell: (info) => info.getValue() as string,
+  //     }),
+  //     columnHelper.accessor('doc', {
+  //       header: 'DOC',
+  //       cell: (info) => info.getValue() as string,
+  //     }),
+  //     columnHelper.accessor('engine_model', {
+  //       header: 'Engine Model',
+  //       cell: (info) => info.getValue() as string,
+  //     }),
+  //     columnHelper.accessor('engine_serial', {
+  //       header: 'Engine Serial',
+  //       cell: (info) => info.getValue() as string,
+  //     }),
+  //     columnHelper.accessor('customer_name', {
+  //       header: 'Customer',
+  //       cell: (info) => info.getValue() as string,
+  //     }),
+  //     columnHelper.accessor('sales_dealer', {
+  //       header: 'Sales Dealer',
+  //       cell: (info) => info.getValue() as string,
+  //     }),
+  //     columnHelper.accessor('service_dealer', {
+  //       header: 'Service Dealer',
+  //       cell: (info) => info.getValue() as string,
+  //     }),
+  //     columnHelper.accessor('warranty_status', {
+  //       header: 'Warranty Status',
+  //       cell: (info) => info.getValue() as string,
+  //     }),
+  //     columnHelper.accessor('warranty_type_code', {
+  //       header: 'Warranty Code',
+  //       cell: (info) => info.getValue() as string,
+  //     }),
+  //     columnHelper.accessor('rma_type', {
+  //       header: 'RMA Type',
+  //       cell: (info) => info.getValue() as string,
+  //     }),
+  //     columnHelper.accessor('contact_person', {
+  //       header: 'Contact Person',
+  //       cell: (info) => info.getValue() as string,
+  //     }),
+  //     columnHelper.accessor('contact_person_no', {
+  //       header: 'Contact Phone',
+  //       cell: (info) => info.getValue() as string,
+  //     }),
+  //     columnHelper.accessor('contact_person_email', {
+  //       header: 'Contact Mail',
+  //       cell: (info) => info.getValue() as string,
+  //     }),
+  //     columnHelper.accessor('caretrack_activated', {
+  //       header: 'Care Track',
+  //       cell: (info) => info.getValue() as string,
+  //     }),
+  //     columnHelper.accessor('csa_type', {
+  //       header: 'CSA',
+  //       cell: (info) => info.getValue() as string,
+  //     }),
+  //   ],
+  //   [getSerialNo] // ✅ Stable dependency
+  // );
 
-  const table = useReactTable({
-    data,
-    columns,
-    state: {
-      sorting,
-    },
-    onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    manualSorting: true,
-    manualPagination: true,
-    pageCount: Math.ceil(total / pageSize) || -1,
-  });
+  // const table = useReactTable({
+  //   data,
+  //   columns,
+  //   state: {
+  //     sorting,
+  //   },
+  //   onSortingChange: setSorting,
+  //   getCoreRowModel: getCoreRowModel(),
+  //   getSortedRowModel: getSortedRowModel(),
+  //   manualSorting: true,
+  //   manualPagination: true,
+  //   pageCount: Math.ceil(total / pageSize) || -1,
+  // });
 
-  const pageCount = Math.max(Math.ceil(total / pageSize), 1);
-  const canPrev = pageIndex > 0;
-  const canNext = pageIndex < pageCount - 1;
+  // const pageCount = Math.max(Math.ceil(total / pageSize), 1);
+  // const canPrev = pageIndex > 0;
+  // const canNext = pageIndex < pageCount - 1;
 
   return (
     <>

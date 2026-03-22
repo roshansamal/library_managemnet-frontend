@@ -12,9 +12,8 @@ import {
   Input,
   Stack,
   useToast,
-  Select as ChakraSelect,
-} from '@chakra-ui/react';
-import { useCallback, useEffect, useState } from 'react';  // ✅ Added useCallback
+  } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';  // ✅ Added useCallback
 import type { CustomerType } from '../../types/CustomerType';
 
 type EmpEditSliderProps = {
@@ -170,13 +169,28 @@ export default function EditCustomerSlider({
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
-      console.log(JSON.stringify(form));
-      const endpoint = '/api/tourbill/admin/customer-update';
-      const res = await fetch(endpoint, {
+      // console.log(JSON.stringify(form));
+      // const endpoint = '/api/tourbill/admin/customer-update';
+      // const res = await fetch(endpoint, {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(form),
+      // });
+      
+      const token = localStorage.getItem('authToken');
+      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+      const res = await fetch(`${apiUrl}/touradmin/customer-update`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        headers: {
+          'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+          body: JSON.stringify(form),
       });
+
+
+
       if (!res.ok) {
         throw new Error('Failed to save employee');
       }

@@ -1,9 +1,9 @@
 // src/pages/FilteredTablePage.tsx
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/react';
-import {
-  Select,
-  useDisclosure,
-} from '@chakra-ui/react';
+// import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/react';
+// import {
+//   Select,
+//   useDisclosure,
+// } from '@chakra-ui/react';
 import { useEffect, useMemo, useState } from 'react';
 import {
   Box,
@@ -20,6 +20,9 @@ import {
   IconButton,
   Text,
   Select as ChakraSelect,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
 } from '@chakra-ui/react';
 import {
   createColumnHelper,
@@ -27,12 +30,12 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   useReactTable,
-  type Row,
+  // type Row,
   type SortingState,
 } from '@tanstack/react-table';
 import { FiChevronLeft, FiChevronRight, FiEdit, FiEye } from 'react-icons/fi';
-import { FaCheck, FaCheckDouble, FaFilter, FaLocationDot } from 'react-icons/fa6';
-import { useToast } from '@chakra-ui/react';
+import { FaLocationDot } from 'react-icons/fa6';
+// import { useToast } from '@chakra-ui/react';
 // import { MdOutlineApproval } from 'react-icons/md';
 // import { FcApproval } from 'react-icons/fc';
 // import { RiEjectFill } from 'react-icons/ri';
@@ -59,9 +62,9 @@ export default function TourListPage() {
 
   // const toast = useToast();
   // const [rows, setRows] = useState<TourMasterType[]>([]);
-  type UserOption = { userid: string };
-  const [users, setUsers] = useState<UserOption[]>([]);
-  const [username, setUsername] = useState('');
+  //type UserOption = { userid: string };
+  // const [users, setUsers] = useState<UserOption[]>([]);
+  // const [username, setUsername] = useState('');
   // Used for Side Drawer Start
   // const { isOpen, onOpen, onClose } = useDisclosure();
   // const [editingRow, setEditingRow] = useState<TourMasterType | null>(null);
@@ -231,12 +234,12 @@ export default function TourListPage() {
   //   : { sort_by: '', sort_dir: '' };
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      const res = await fetch('/api/tourbill/tourlist');
-      const json: UserOption[] = await res.json();
-      setUsers(json);
-    };
-    fetchUsers();
+    // const fetchUsers = async () => {
+    //   const res = await fetch('/api/tourbill/tourlist');
+    //   const json: UserOption[] = await res.json();
+    //   setUsers(json);
+    // };
+    // fetchUsers();
   }, []);
   
   // Columns, including selection column
@@ -280,6 +283,7 @@ export default function TourListPage() {
               _hover={{bg:"black",textColor:"white"}}
               onClick={() => {
                 //openTourEdit(rowData)
+                console.debug(rowData);
               }}
             />
           );
@@ -426,7 +430,7 @@ export default function TourListPage() {
         header: 'Tour Start Date',
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor('tour_start_date', {
+      columnHelper.accessor('tour_end_date', {
         header: 'Tour End Date',
         cell: (info) => info.getValue(),
       }),
@@ -455,14 +459,16 @@ export default function TourListPage() {
   const handleFetch = async () => {
     try {
       setIsLoading(true);
-      //console.log('Info:',selectedUser);
-      const res = await fetch('/api/tourbill/tourlist', {
+      const token = localStorage.getItem('authToken');
+      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+      const res = await fetch(`${apiUrl}/api/touradmin/tourlist`, {
           method: 'POST',
           credentials: 'include',
           headers: {
-            'Content-Type': 'application/json',
-            //Authorization: `Bearer ${token}`,
-          },
+          'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
           body: JSON.stringify({
             "start_date":startDate,
             "end_date":endDate,
@@ -486,48 +492,48 @@ export default function TourListPage() {
 
   return (
     <>
-    {/* <Breadcrumb fontWeight="thin" fontSize={"sm"} mb={1}>
+    <Breadcrumb fontWeight="bold" fontSize={"sm"} mb={1} color={'blue.500'}>
       <BreadcrumbItem>
         <BreadcrumbLink href="/">Home</BreadcrumbLink>
       </BreadcrumbItem>
       <BreadcrumbItem>
-        <BreadcrumbLink href="/tours">Manager</BreadcrumbLink>
+        <BreadcrumbLink href="">Tour Manager</BreadcrumbLink>
       </BreadcrumbItem>
       <BreadcrumbItem isCurrentPage>
-        <BreadcrumbLink>Bills Pending Approval</BreadcrumbLink>
+        <BreadcrumbLink>Tour List</BreadcrumbLink>
       </BreadcrumbItem>
-    </Breadcrumb> */}
+    </Breadcrumb>
     <Box borderWidth="1px" borderRadius="md" maxH="500px" overflow="auto" p={1}>
       {/* Filters */}
-      <HStack spacing={1} mb={4} align="flex-end" justifyContent={"left"}>
+      <HStack spacing={1} mb={2} align="flex-end" justifyContent={"center"}>
          <Box>
-          <Text mb={1} fontSize="sm" fontWeight="medium">
+          {/* <Text mb={1} fontSize="sm" fontWeight="medium">
             From Date
-          </Text>
+          </Text> */}
           <Input
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
             //min={startDate || undefined}
-            bg="cyan.50"
+            bg="gray.300"
             h={8}
           />
         </Box>
         <Box>
-          <Text mb={1} fontSize="sm" fontWeight="medium">
+          {/* <Text mb={1} fontSize="sm" fontWeight="medium">
             To Date
-          </Text>
+          </Text> */}
           <Input
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
             min={startDate || undefined}
-            bg="cyan.50"
+            bg="gray.300"
             h={8}
           />
         </Box>
         <Button colorScheme="blue" onClick={handleFetch} h={8} fontSize={"sm"}>
-          <FaFilter/>Apply
+          Apply
         </Button>
       </HStack>
 
@@ -537,7 +543,7 @@ export default function TourListPage() {
           size="sm"
           minW="1200px"
           variant="striped"
-          colorScheme="gray"
+          colorScheme="green"
           maxH="50vh"
         >
           <Thead bg="gray.700" top={0} zIndex={1}>
@@ -557,6 +563,7 @@ export default function TourListPage() {
                       }
                       whiteSpace="nowrap"
                       color="white"
+                      py="1"
                     >
                       {flexRender(
                         header.column.columnDef.header,
@@ -575,7 +582,7 @@ export default function TourListPage() {
             {table.getRowModel().rows.length === 0 && !isLoading && (
               <Tr>
                 <Td colSpan={columns.length}>
-                  <Text textAlign="center" py={4}>
+                  <Text textAlign="center" py={1}>
                     No records found.
                   </Text>
                 </Td>
@@ -584,7 +591,8 @@ export default function TourListPage() {
             {table.getRowModel().rows.map((row) => (
               <Tr key={row.id}>
                 {row.getVisibleCells().map((cell) => (
-                  <Td key={cell.id}>
+                  // <Td key={cell.id}>
+                  <Td key={cell.id} lineHeight="1" py="0.5">  {/* Add lineHeight here */}
                     {flexRender(
                       cell.column.columnDef.cell,
                       cell.getContext(),
@@ -633,7 +641,7 @@ export default function TourListPage() {
                         setPageIndex(0);
                       }}
                     >
-                      {[10, 20, 50].map((size) => (
+                      {[10, 20, 50,100].map((size) => (
                         <option key={size} value={size}>
                           {size}
                         </option>

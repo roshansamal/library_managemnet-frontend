@@ -1,9 +1,8 @@
 // src/pages/FilteredTablePage.tsx
-import { Badge, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Center, Spacer, Spinner, TableContainer, VStack } from '@chakra-ui/react';
+import {  Breadcrumb, BreadcrumbItem, BreadcrumbLink, TableContainer,  } from '@chakra-ui/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Box,
-  Button,
   HStack,
   Input,
   Table,
@@ -26,8 +25,8 @@ import {
   type Row,
   type SortingState,
 } from '@tanstack/react-table';
-import { FiChevronLeft, FiChevronRight, FiEdit, FiEye } from 'react-icons/fi';
-import { FaFileCsv, FaFileExcel, FaFilePdf,FaLocationDot } from 'react-icons/fa6';
+import { FiChevronLeft, FiChevronRight,} from 'react-icons/fi';
+import { FaFileCsv, FaFileExcel, FaFilePdf } from 'react-icons/fa6';
 import { ChevronRightIcon } from '@chakra-ui/icons/ChevronRight';
 import type { UtilizationType } from '../../types/UtilizationType';
 import TableLoader from '../../components/TableLoader';
@@ -232,9 +231,9 @@ const getSerialNo = useSerialNumber(pageIndex, pageSize);
             h={"8"}
           />
         </Box>
-      <Button colorScheme="blue" onClick={handleFetch(0,10)} h={8} fontWeight={"normal"} variant="solid">
+      {/* <Button colorScheme="blue" onClick={handleFetch(0,10)} h={8} fontWeight={"normal"} variant="solid">
         Apply
-      </Button>
+      </Button> */}
       <HStack mb={0} h={8} p={0}>
         <IconButton 
           colorScheme="blue" 

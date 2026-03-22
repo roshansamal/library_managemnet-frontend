@@ -2,14 +2,14 @@
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/react';
 import {
   Select,
-  useDisclosure,
+  // useDisclosure,
 } from '@chakra-ui/react';
 import { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Button,
   HStack,
-  Input,
+  // Input,
   Table,
   Thead,
   Tbody,
@@ -27,11 +27,11 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   useReactTable,
-  type Row,
+  // type Row,
   type SortingState,
 } from '@tanstack/react-table';
-import { FiChevronLeft, FiChevronRight, FiEdit, FiEye } from 'react-icons/fi';
-import { FaCheck, FaCheckDouble, FaFileCsv, FaFileExcel, FaFilePdf, FaFilter, FaLocationDot } from 'react-icons/fa6';
+import { FiChevronLeft, FiChevronRight, FiEye } from 'react-icons/fi';
+import { FaCheck, FaFileCsv, FaFileExcel, FaFilePdf, FaFilter, FaLocationDot } from 'react-icons/fa6';
 import { useToast } from '@chakra-ui/react';
 // import { MdOutlineApproval } from 'react-icons/md';
 // import { FcApproval } from 'react-icons/fc';
@@ -46,50 +46,50 @@ type ApiResponse = {
 };
 
 const columnHelper = createColumnHelper<TourMasterType>();
-import { FaDownload, FaUndo } from 'react-icons/fa';
+import { FaUndo } from 'react-icons/fa';
 import ViewGpsSlider from '../components/ViewGpsSlider';
-import ViewTourBillSlider from '../components/ViewTourBillSlider';
-import ViewTourDetailsSlider from '../components/ViewTourDetailsSlider';
-import MgrTourBillApprovalSlider from '../components/MgrTourBillApprovalSlider';
-import MgrTourBillReturnSlider from '../components/MgrTourBillReturnSlider';
+// import ViewTourBillSlider from '../components/ViewTourBillSlider';
+// import ViewTourDetailsSlider from '../components/ViewTourDetailsSlider';
+// import MgrTourBillApprovalSlider from '../components/MgrTourBillApprovalSlider';
+// import MgrTourBillReturnSlider from '../components/MgrTourBillReturnSlider';
 import type { TourMasterType } from '../types/TourMasterType';
 
 export default function FinPendingBills() {
   const toast = useToast();
-  const [rows, setRows] = useState<TourMasterType[]>([]);
+  // const [rows, setRows] = useState<TourMasterType[]>([]);
   type UserOption = { userid: string };
   const [users, setUsers] = useState<UserOption[]>([]);
   const [selectedUser, setSelectedUser] = useState('');
-  const [username, setUsername] = useState('');
+  // const [username, setUsername] = useState('');
   // Used for Side Drawer Start
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [editingRow, setEditingRow] = useState<TourMasterType | null>(null);
-  const [reloadKey, setReloadKey] = useState(0); //For Forcing Screen Update
+  // const { isOpen, onOpen, onClose } = useDisclosure();
+  // const [editingRow, setEditingRow] = useState<TourMasterType | null>(null);
+  // const [reloadKey, setReloadKey] = useState(0); //For Forcing Screen Update
   //--------------------------------
   //Used for Edit Slide Drawer
   const [selectedRow, setSelectedRow] = useState<TourMasterType | null>(null);
-  const [isTourEditOpen, setIsTourEditOpen] = useState(false);
+  // const [isTourEditOpen, setIsTourEditOpen] = useState(false);
   const openTourEdit = (row: TourMasterType) => {
     setSelectedRow(row);
-    setIsTourEditOpen(true);
+    // setIsTourEditOpen(true);
   };
-  const closeTourEdit = () => {
-    setIsTourEditOpen(false);
-    setSelectedRow(null);
-  };
+  // const closeTourEdit = () => {
+  //   setIsTourEditOpen(false);
+  //   setSelectedRow(null);
+  // };
   function fetchDataAgain(): void {
     handleFetch();
   }
   //---Tour View Slider Begin Here-----------------------------
-  const [isTourViewOpen, setIsTourViewOpen] = useState(false);
+  // const [isTourViewOpen, setIsTourViewOpen] = useState(false);
   const openTourView = (row: TourMasterType) => {
     setSelectedRow(row);
-    setIsTourViewOpen(true);
+    // setIsTourViewOpen(true);
   };
-  const closeTourView = () => {
-    setIsTourViewOpen(false);
-    setSelectedRow(null);
-  };
+  // const closeTourView = () => {
+  //   setIsTourViewOpen(false);
+  //   setSelectedRow(null);
+  // };
   //---Tour View Slider Ends Here-----------------------------
   //---Tour Gps Slider Begin Here-----------------------------
   const [isTourGpsOpen, setIsTourGpsOpen] = useState(false);
@@ -103,25 +103,25 @@ export default function FinPendingBills() {
   };
   //---Tour Gps Slider Ends Here-----------------------------
   //---Tour Approval Slider Begin Here-----------------------------
-  const [isTourApprovalOpen, setIsTourApprovalOpen] = useState(false);
-  const [isBillApprovalOpen, setIsBillApprovalOpen] = useState(false);
-  const [isBillReturnOpen, setIsBillReturnOpen] = useState(false);
+  // const [isTourApprovalOpen, setIsTourApprovalOpen] = useState(false);
+  // const [isBillApprovalOpen, setIsBillApprovalOpen] = useState(false);
+  // const [isBillReturnOpen, setIsBillReturnOpen] = useState(false);
   const openTourApproval = (row: TourMasterType) => {
     setSelectedRow(row);
-    setIsTourApprovalOpen(true);
+    // setIsTourApprovalOpen(true);
   };
-  const closeBillApproval = () => {
-    setIsBillApprovalOpen(false);
-    setSelectedRow(null);
-  };
+  // const closeBillApproval = () => {
+  //   setIsBillApprovalOpen(false);
+  //   setSelectedRow(null);
+  // };
   const openBillReturn = (row: TourMasterType) => {
     setSelectedRow(row);
-    setIsBillReturnOpen(true);
+    // setIsBillReturnOpen(true);
   };
-   const closeBillReturn = () => {
-    setIsBillReturnOpen(false);
-    setSelectedRow(null);
-  };
+  //  const closeBillReturn = () => {
+  //   setIsBillReturnOpen(false);
+  //   setSelectedRow(null);
+  // };
   //---Tour Approval Slider Ends Here-----------------------------
 
   const handleApproveSelected = async () => {
@@ -156,7 +156,7 @@ export default function FinPendingBills() {
       // simplest: just reset pageIndex or bump a reload counter
       setPageIndex(0); // triggers useEffect fetch because dependency
       setSelectedIds([]);
-      setReloadKey((k) => k + 1); // forces useEffect to run
+      // setReloadKey((k) => k + 1); // forces useEffect to run
       fetchDataAgain();
     } catch (err) {
       //console.error(err);
@@ -173,10 +173,10 @@ export default function FinPendingBills() {
   //   setIsTourViewOpen(true);
   //   onOpen();
   // };
-  const handleReturnClick = (row: TourMasterType) => {
-    setEditingRow(row);
-    onOpen();
-  };
+  // const handleReturnClick = (row: TourMasterType) => {
+  //   setEditingRow(row);
+  //   onOpen();
+  // };
 
   // Used for Side Drawer End
   // const [appliedFilters, setAppliedFilters] = useState({
@@ -204,51 +204,51 @@ export default function FinPendingBills() {
     );
   };
 
-  const handleExportCSV = () => {
-      // Get visible headers
-      const headers = table
-        .getHeaderGroups()
-        .map((x) => x.headers)
-        .flat();
+  // const handleExportCSV = () => {
+  //     // Get visible headers
+  //     const headers = table
+  //       .getHeaderGroups()
+  //       .map((x) => x.headers)
+  //       .flat();
 
-      // Get visible rows
-      const rows = table.getCoreRowModel().rows;
+  //     // Get visible rows
+  //     const rows = table.getCoreRowModel().rows;
 
-      // Build CSV content
-      const headerRow = headers
-        .map((h) => {
-          const headerContent = h.column.columnDef.header;
-          if (typeof headerContent === 'string') return headerContent;
-          return h.id;
-        })
-        .join(',');
+  //     // Build CSV content
+  //     const headerRow = headers
+  //       .map((h) => {
+  //         const headerContent = h.column.columnDef.header;
+  //         if (typeof headerContent === 'string') return headerContent;
+  //         return h.id;
+  //       })
+  //       .join(',');
 
-      const dataRows = rows
-        .map((row) =>
-          headers
-            .map((h) => {
-              const value = row.getValue(h.id);
-              // escape quotes in values
-              const escaped = String(value ?? '').replace(/"/g, '""');
-              return `"${escaped}"`;
-            })
-            .join(','),
-        )
-        .join('\n');
+  //     const dataRows = rows
+  //       .map((row) =>
+  //         headers
+  //           .map((h) => {
+  //             const value = row.getValue(h.id);
+  //             // escape quotes in values
+  //             const escaped = String(value ?? '').replace(/"/g, '""');
+  //             return `"${escaped}"`;
+  //           })
+  //           .join(','),
+  //       )
+  //       .join('\n');
 
-      const csv = `${headerRow}\n${dataRows}`;
+  //     const csv = `${headerRow}\n${dataRows}`;
 
-      // Trigger download
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'table-export.csv';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-  };
+  //     // Trigger download
+  //     const blob = new Blob([csv], { type: 'text/csv' });
+  //     const url = URL.createObjectURL(blob);
+  //     const a = document.createElement('a');
+  //     a.href = url;
+  //     a.download = 'table-export.csv';
+  //     document.body.appendChild(a);
+  //     a.click();
+  //     document.body.removeChild(a);
+  //     URL.revokeObjectURL(url);
+  // };
   // ----------------------------
   // const reloadTours = async () => {
   //   try {

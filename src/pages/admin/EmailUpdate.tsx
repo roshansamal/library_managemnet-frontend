@@ -4,7 +4,7 @@ import {
   Box,
   Button,
   HStack,
-  Input,
+  // Input,
   Thead,
   Tbody,
   Tr,
@@ -18,11 +18,11 @@ import {
 import {
   createColumnHelper,
   flexRender,
-  type PaginationState,
-  type Row,
-  type RowModel,
-  type SortingState,
-  type Updater,
+  // type PaginationState,
+  // type Row,
+  // type RowModel,
+  // type SortingState,
+  // type Updater,
 } from '@tanstack/react-table';
 import { FiChevronLeft, FiChevronRight, FiEdit } from 'react-icons/fi';
 import { FaRecycle, FaTrash } from 'react-icons/fa6';
@@ -37,24 +37,25 @@ import {
   getPaginationRowModel,
 } from '@tanstack/react-table';
 
-type ApiResponse = {
-  data: EmployeeType[];
-  current_page: number;
-  per_page: number;
-  total: number;
-};
+// type ApiResponse = {
+//   data: EmployeeType[];
+//   current_page: number;
+//   per_page: number;
+//   total: number;
+// };
 
 const columnHelper = createColumnHelper<EmployeeType>();
+const pageSize=1;
 
 export default function EmailUpdate() {
-  const [sorting, setSorting] = useState<SortingState>([]);
+  // const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedRow, setSelectedRow] = useState<EmployeeType | null>(null);
-  const [users, setUsers] = useState<UserOption[]>([]);
-  const [username, setUsername] = useState('');
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  // const [users, setUsers] = useState<UserOption[]>([]);
+  // const [username, setUsername] = useState('');
+  const [selectedIds, ] = useState<number[]>([]);
   const isSelected = (tourid: number) => selectedIds.includes(tourid);
   const [isEmailEditOpen, setIsEmailEditOpen] = useState(false);
-  const [isEmailEditClose, setIsEmailEditClose] = useState(false);
+  // const [isEmailEditClose, setIsEmailEditClose] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [rowToDelete, setRowToDelete] = useState<EmployeeType | null>(null);
   const toast = useToast();
@@ -66,14 +67,14 @@ export default function EmailUpdate() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Type Declaration
-  type UserOption = { userid: string };
+  // type UserOption = { userid: string };
   
   function fetchDataAgain(): void {
     handleFetch();
   }
 
   const CloseEmailEditSlider = () => {
-    setIsEmailEditClose(true);
+    // setIsEmailEditClose(true);
     setIsEmailEditOpen(false);
     setSelectedRow(null);
   };
@@ -192,8 +193,8 @@ const table = useReactTable({
   manualPagination: true,
   pageCount: total ? Math.ceil(total / pagination.pageSize) : -1,
 });
-  const { pageIndex, pageSize } = table.getState().pagination;
-  const pageCount = Math.max(Math.ceil(total / pageSize), 1);
+  // const { pageIndex, pageSize } = table.getState().pagination;
+  // const pageCount = Math.max(Math.ceil(total / pageSize), 1);
   // const canPrev = pageIndex > 0;
   // const canNext = pageIndex < pageCount - 1;
   // ✅ Table-controlled buttons (REPLACE your manual ones)
@@ -220,7 +221,18 @@ const handleFetch = useCallback(async () => {
     page: (pagination.pageIndex + 1).toString(),
     per_page: pagination.pageSize.toString(),
   });
-  const res = await fetch(`/api/tourbill/admin/externalmail?${params}`);
+
+  const token = localStorage.getItem('authToken');
+  const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+  const res = await fetch(`${apiUrl}/api/touradmin/externalmail?${params}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+  });
+
   if (!res.ok) throw new Error(await res.text());
   const json = await res.json();
   setData(json.data);
@@ -251,9 +263,17 @@ useEffect(() => {
   const handleDeleteConfirm = async () => {
     if (!rowToDelete) return;
     try {
-      const res = await fetch(`/api/tourbill/admin/empdelete/${rowToDelete.id}`, {
+      const token = localStorage.getItem('authToken');
+      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+      const res = await fetch(`${apiUrl}/touradmin/empdelete/${rowToDelete.id}`, {
         method: 'DELETE',
         credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        
       });
       if (!res.ok) {
         throw new Error(`Delete failed: ${res.status}`);
@@ -261,9 +281,6 @@ useEffect(() => {
 
       // Option 1: refetch
       await handleFetch();
-
-      // Option 2: local remove (if you prefer):
-      // setData(prev => prev.filter(emp => emp.id !== rowToDelete.id));
 
       toast({
         title: 'Deleted',

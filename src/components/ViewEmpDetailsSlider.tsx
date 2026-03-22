@@ -31,7 +31,7 @@ export default function ViewEmpDetailsSlider({
 
   // Local form state
   const [form, setForm] = useState<TourMasterType | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
   //------------------------------------------
   // fetch Tour Details when drawer opens and we have an id
   useEffect(() => {
@@ -42,8 +42,9 @@ export default function ViewEmpDetailsSlider({
     const controller = new AbortController();
     const fetchTour = async () => {
       try {
-        setIsLoading(true);
-        const res = await fetch(`/api/tours/${tourId}/dtls`, { signal: controller.signal });
+        // setIsLoading(true);
+        const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+        const res = await fetch(`${apiUrl}/api/tours/${tourId}/dtls`, { signal: controller.signal });
         if (!res.ok) {
           throw new Error(`Failed to load tour: ${res.status}`);
         }
@@ -63,7 +64,7 @@ export default function ViewEmpDetailsSlider({
           isClosable: true,
         });
       } finally {
-        setIsLoading(false);
+        //setIsLoading(false);
       }
     };
 

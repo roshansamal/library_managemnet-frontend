@@ -1,15 +1,18 @@
 // src/pages/FilteredTablePage.tsx
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/react';
+// import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/react';
 import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
   Select,
-  useDisclosure,
+  // useDisclosure,
 } from '@chakra-ui/react';
 import { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Button,
   HStack,
-  Input,
+  // Input,
   Table,
   Thead,
   Tbody,
@@ -27,11 +30,11 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   useReactTable,
-  type Row,
+  // type Row,
   type SortingState,
 } from '@tanstack/react-table';
-import { FiChevronLeft, FiChevronRight, FiEdit, FiEye } from 'react-icons/fi';
-import { FaCheck, FaCheckDouble, FaFileCsv, FaFileExcel, FaFilePdf, FaFilter, FaLocationDot } from 'react-icons/fa6';
+import { FiChevronLeft, FiChevronRight,  FiEye } from 'react-icons/fi';
+import { FaCheck,  FaFileCsv, FaFileExcel, FaFilePdf, FaFilter, FaLocationDot } from 'react-icons/fa6';
 import { useToast } from '@chakra-ui/react';
 // import { MdOutlineApproval } from 'react-icons/md';
 // import { FcApproval } from 'react-icons/fc';
@@ -46,25 +49,26 @@ type ApiResponse = {
 };
 
 const columnHelper = createColumnHelper<TourbillColumns>();
-import { FaDownload, FaUndo } from 'react-icons/fa';
+// import { FaDownload, FaUndo } from 'react-icons/fa';
 import ViewGpsSlider from '../components/ViewGpsSlider';
 import type { TourbillColumns } from '../interfaces/TourbillColumns';
 import ViewTourBillSlider from '../components/ViewTourBillSlider';
 import ViewTourDetailsSlider from '../components/ViewTourDetailsSlider';
 import MgrTourBillApprovalSlider from '../components/MgrTourBillApprovalSlider';
 import MgrTourBillReturnSlider from '../components/MgrTourBillReturnSlider';
+import { FaUndo } from 'react-icons/fa';
 
 export default function MgrBillApproved() {
   const toast = useToast();
-  const [rows, setRows] = useState<TourbillColumns[]>([]);
+  // const [rows, setRows] = useState<TourbillColumns[]>([]);
   type UserOption = { userid: string };
   const [users, setUsers] = useState<UserOption[]>([]);
   const [selectedUser, setSelectedUser] = useState('');
-  const [username, setUsername] = useState('');
+  // const [username, setUsername] = useState('');
   // Used for Side Drawer Start
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [editingRow, setEditingRow] = useState<TourbillColumns | null>(null);
-  const [reloadKey, setReloadKey] = useState(0); //For Forcing Screen Update
+  // const { isOpen, onOpen, onClose } = useDisclosure();
+  // const [editingRow, setEditingRow] = useState<TourbillColumns | null>(null);
+  // const [reloadKey, setReloadKey] = useState(0); //For Forcing Screen Update
   //--------------------------------
   //Used for Edit Slide Drawer
   const [selectedRow, setSelectedRow] = useState<TourbillColumns | null>(null);
@@ -103,12 +107,12 @@ export default function MgrBillApproved() {
   };
   //---Tour Gps Slider Ends Here-----------------------------
   //---Tour Approval Slider Begin Here-----------------------------
-  const [isTourApprovalOpen, setIsTourApprovalOpen] = useState(false);
+  // const [isTourApprovalOpen, setIsTourApprovalOpen] = useState(false);
   const [isBillApprovalOpen, setIsBillApprovalOpen] = useState(false);
   const [isBillReturnOpen, setIsBillReturnOpen] = useState(false);
   const openTourApproval = (row: TourbillColumns) => {
     setSelectedRow(row);
-    setIsTourApprovalOpen(true);
+    // setIsTourApprovalOpen(true);
   };
   const closeBillApproval = () => {
     setIsBillApprovalOpen(false);
@@ -133,14 +137,20 @@ export default function MgrBillApproved() {
       );
       if (!ok) return;
       //console.log(selectedIds);
-      const res = await fetch('/api/tourbill/billmgrapproved', {
-        method: 'POST',
+      const params = new URLSearchParams({ ticket_status: "Mgr Approved" });
+      const token = localStorage.getItem('authToken');
+      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+      const res = await fetch(`${apiUrl}/api/touradmin/mgr-bill-approved?${params}`, {
+        method: 'GET',
+        credentials: 'include',
         headers: {
-          'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ids: selectedIds,
-        }),
+        // body: JSON.stringify({
+        //   ids: selectedIds,
+        // }),
       });
 
       if (!res.ok) {
@@ -156,7 +166,7 @@ export default function MgrBillApproved() {
       // simplest: just reset pageIndex or bump a reload counter
       setPageIndex(0); // triggers useEffect fetch because dependency
       setSelectedIds([]);
-      setReloadKey((k) => k + 1); // forces useEffect to run
+      //setReloadKey((k) => k + 1); // forces useEffect to run
       fetchDataAgain();
     } catch (err) {
       //console.error(err);
@@ -173,10 +183,10 @@ export default function MgrBillApproved() {
   //   setIsTourViewOpen(true);
   //   onOpen();
   // };
-  const handleReturnClick = (row: TourbillColumns) => {
-    setEditingRow(row);
-    onOpen();
-  };
+  // const handleReturnClick = (row: TourbillColumns) => {
+  //   setEditingRow(row);
+  //   onOpen();
+  // };
 
   // Used for Side Drawer End
   // const [appliedFilters, setAppliedFilters] = useState({
@@ -275,12 +285,50 @@ export default function MgrBillApproved() {
   //     }
   //   : { sort_by: '', sort_dir: '' };
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const res = await fetch('/api/tourbill/billsubmittedby');
+
+  const fetchUsers = async () => {
+    try {
+      setIsLoading(true);
+      const token = localStorage.getItem('authToken');
+      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+      const res = await fetch(`${apiUrl}/api/touradmin/billsubmittedby`, {
+        method: 'GET',
+          credentials: 'include',
+          headers: {
+          'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+      });
+
+      if (!res.ok) {
+        console.error('Error:', res.status, await res.text());
+        return;
+      }
       const json: UserOption[] = await res.json();
-      setUsers(json);
-    };
+        setUsers(json);       // optional reset
+      } catch (e) {
+        console.error('Fetch failed:', e);
+      } finally {
+        setIsLoading(false);
+      }
+  };
+
+  useEffect(() => {
+    // const fetchUsers = async () => {
+    //   const token = localStorage.getItem('authToken');
+    //   const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+    //   const res = await fetch(`${apiUrl}/api/touradmin/billsubmittedby`, {
+    //     method: 'GET',
+    //       credentials: 'include',
+    //       headers: {
+    //       'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+    //       'Accept': 'application/json',
+    //       'Content-Type': 'application/json'
+    //     },
+    // });
+    // const json: UserOption[] = await res.json();
+    // setUsers(json);
     fetchUsers();
     handleFetch();
   }, []);
@@ -478,15 +526,17 @@ export default function MgrBillApproved() {
   const handleFetch = async () => {
   try {
     setIsLoading(true);
-    //console.log('Info:',selectedUser);
-    const res = await fetch('/api/tourbill/mgr-bill-approved', {
-        method: 'POST',
+    const params = new URLSearchParams({ ticket_status: "Mgr_Bill_Approved",search: selectedUser, });
+    const token = localStorage.getItem('authToken');
+    const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+    const res = await fetch(`${apiUrl}/api/touradmin/mgr-bill-approved?${params}`, {
+        method: 'GET',
+        credentials: 'include',
         headers: {
-          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          search: selectedUser,
-        }),
       });
     if (!res.ok) {
       console.error('Error:', res.status, await res.text());
@@ -506,7 +556,7 @@ export default function MgrBillApproved() {
 
   return (
     <>
-    {/* <Breadcrumb fontWeight="thin" fontSize={"sm"} mb={1}>
+    <Breadcrumb fontWeight="normal" fontSize={"sm"} mb={1} ml={1} color={"red"}>
       <BreadcrumbItem>
         <BreadcrumbLink href="/">Home</BreadcrumbLink>
       </BreadcrumbItem>
@@ -514,9 +564,9 @@ export default function MgrBillApproved() {
         <BreadcrumbLink href="/tours">Manager</BreadcrumbLink>
       </BreadcrumbItem>
       <BreadcrumbItem isCurrentPage>
-        <BreadcrumbLink>Bills Pending Approval</BreadcrumbLink>
+        <BreadcrumbLink>Bills Approved</BreadcrumbLink>
       </BreadcrumbItem>
-    </Breadcrumb> */}
+    </Breadcrumb>
     <Box borderWidth="1px" borderRadius="md" maxH="500px" overflow="auto" p={1}>
       {/* Filters */}
       <HStack spacing={1} mb={5} align="flex-start" justifyContent={"left"}>

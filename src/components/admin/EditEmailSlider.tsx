@@ -12,12 +12,12 @@ import {
   Input,
   Stack,
   useToast,
-  Select as ChakraSelect,
+  
 } from '@chakra-ui/react';
-import { useCallback, useEffect, useState } from 'react';  // ✅ Added useCallback
+import { useEffect, useState } from 'react';  // ✅ Added useCallback
 import type { EmployeeType } from '../../types/EmployeeType';
-import type { SelectOption } from '../../types/SelectOption';
-import { PureSelect } from '../../components/utils/PureSelect'; // ✅ Add this import
+// import type { SelectOption } from '../../types/SelectOption';
+// import { PureSelect } from '../../components/utils/PureSelect'; // ✅ Add this import
 
 type EmpEditSliderProps = {
   isOpen: boolean;
@@ -73,12 +73,18 @@ const [form, setForm] = useState<FormValues>({
     try {
       setIsSubmitting(true);
       console.log(JSON.stringify(form));
-      const endpoint = '/api/tourbill/admin/emailupdate';
-      const res = await fetch(endpoint, {
+      const token = localStorage.getItem('authToken');
+      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+      const res = await fetch(`${apiUrl}/touradmin/emailupdate`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(form),
       });
+
       if (!res.ok) {
         throw new Error('Failed to save employee');
       }

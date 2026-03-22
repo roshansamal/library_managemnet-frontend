@@ -12,10 +12,9 @@ import {
   Input,
   Stack,
   useToast,
-  Select as ChakraSelect,
-  HStack,
+    HStack,
 } from '@chakra-ui/react';
-import { useCallback, useEffect, useState } from 'react';  // ✅ Added useCallback
+import {  useEffect, useState } from 'react';  // ✅ Added useCallback
 // import { PureSelect } from '../utils/PureSelect';
 export type Option = SelectOption;  // Alias
 import type { OdometerType } from '../../types/OdometerType';
@@ -99,13 +98,18 @@ export default function OdometerSlider({
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
-      console.log(JSON.stringify(form));
-      const endpoint = '/api/tourbill/admin/odometer-update';
-      const res = await fetch(endpoint, {
+      const token = localStorage.getItem('authToken');
+      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+      const res = await fetch(`${apiUrl}/touradmin/odometer-update`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(form),
       });
+      //----------------------------------
       if (!res.ok) {
         throw new Error('Failed to update tour status');
       }

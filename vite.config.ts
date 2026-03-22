@@ -9,8 +9,8 @@ export default defineConfig({
       //host: 'localhost', // or '0.0.0.0' if you access from LAN
       host: 'tourapi.pollutech.org.in', // or '0.0.0.0' if you access from LAN
       '/api': {
-        //target: 'http://127.0.0.1:8000',  // Laravel port
-        target: 'http://tourapi.pollutech.org.in',  // Laravel port
+        //target: 'https://127.0.0.1:8000',  // Laravel port
+        target: 'https://tourapi.pollutech.org.in',  // Laravel port
         changeOrigin: true,
         secure: false,
       }

@@ -1,15 +1,12 @@
 // src/pages/FilteredTablePage.tsx
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, Spacer, Spinner, TableContainer } from '@chakra-ui/react';
-import {
-  Select,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, Spinner, TableContainer } from '@chakra-ui/react';
+// import {
+//   Select,
+//   useDisclosure,
+// } from '@chakra-ui/react';
 import { useEffect, useMemo, useState } from 'react';
 import {
-  Box,
-  Button,
   HStack,
-  Input,
   Table,
   Thead,
   Tbody,
@@ -27,12 +24,11 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   useReactTable,
-  type Row,
   type SortingState,
 } from '@tanstack/react-table';
-import { FiChevronLeft, FiChevronRight, FiEdit, FiEye } from 'react-icons/fi';
-import { FaCheck, FaCheckDouble, FaFilter, FaLocationDot } from 'react-icons/fa6';
-import { useToast } from '@chakra-ui/react';
+import { FiChevronLeft, FiChevronRight, FiEye } from 'react-icons/fi';
+import { FaLocationDot } from 'react-icons/fa6';
+// import { useToast } from '@chakra-ui/react';
 import ViewTourDetailsSlider from '../../components/ViewTourDetailsSlider';
 import type { TourMasterType } from '../../types/TourMasterType';
 import { ChevronRightIcon } from '@chakra-ui/icons/ChevronRight';
@@ -51,17 +47,17 @@ type ApiResponse = {
 const columnHelper = createColumnHelper<TourMasterType>();
 
 export default function EngineersAvailable() {
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  // const [startDate, setStartDate] = useState('');
+  // const [endDate, setEndDate] = useState('');
   //const [selectedUser, setSelectedUser] = useState('');
 
 
 
   // const toast = useToast();
   // const [rows, setRows] = useState<TourMasterType[]>([]);
-  type UserOption = { userid: string };
-  const [users, setUsers] = useState<UserOption[]>([]);
-  const [username, setUsername] = useState('');
+  // type UserOption = { userid: string };
+  // const [users, setUsers] = useState<UserOption[]>([]);
+  // const [username, setUsername] = useState('');
   // Used for Side Drawer Start
   // const { isOpen, onOpen, onClose } = useDisclosure();
   // const [editingRow, setEditingRow] = useState<TourMasterType | null>(null);
@@ -93,15 +89,15 @@ export default function EngineersAvailable() {
   };
   //---Tour View Slider Ends Here-----------------------------
   //---Tour Gps Slider Begin Here-----------------------------
-  const [isTourGpsOpen, setIsTourGpsOpen] = useState(false);
+  // const [isTourGpsOpen, setIsTourGpsOpen] = useState(false);
   const openTourGps = (row:TourMasterType) => {
     setSelectedRow(row);
-    setIsTourGpsOpen(true);
+    // setIsTourGpsOpen(true);
   };
-  const closeTourGps = () => {
-    setIsTourGpsOpen(false);
-    setSelectedRow(null);
-  };
+  // const closeTourGps = () => {
+  //   setIsTourGpsOpen(false);
+  //   setSelectedRow(null);
+  // };
   
 
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -136,25 +132,25 @@ export default function EngineersAvailable() {
         header: 'TourId',
         cell: (info) => JSON.stringify(info.getValue()),
       }),
-      columnHelper.display({
-        id: 'tour',
-        header: 'Edit',
-        cell: (info) => {
-          const rowData = info.row.original;
-          return (
-            <IconButton
-              aria-label="Edit"
-              icon={<FiEdit />}
-              size="sm"
-              variant="ghost"
-              _hover={{bg:"black",textColor:"white"}}
-              onClick={() => {
-                //openTourEdit(rowData)
-              }}
-            />
-          );
-        },
-      }),
+      // columnHelper.display({
+      //   id: 'tour',
+      //   header: 'Edit',
+      //   cell: (info) => {
+      //     // const rowData = info.row.original;
+      //     return (
+      //       <IconButton
+      //         aria-label="Edit"
+      //         icon={<FiEdit />}
+      //         size="sm"
+      //         variant="ghost"
+      //         _hover={{bg:"black",textColor:"white"}}
+      //         onClick={() => {
+      //           //openTourEdit(rowData)
+      //         }}
+      //       />
+      //     );
+      //   },
+      // }),
       columnHelper.display({
         id: 'view',
         header: 'View',

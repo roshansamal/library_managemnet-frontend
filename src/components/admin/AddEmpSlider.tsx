@@ -32,14 +32,24 @@ type AddEmpSliderProps = {
 export default function AddEmpSlider({
   isOpen,
   onClose,
-  initialData,
+  // initialData,
   onUpdated,
 }: AddEmpSliderProps) {
   const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchDesignations = useCallback(async (): Promise<Option[]> => {
-    const res = await fetch("/api/tourbill/admin/desiglist");
+    const token = localStorage.getItem('authToken');
+    const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+    const res = await fetch(`${apiUrl}/touradmin/desiglist`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+    });
+   
     const json = await res.json();
     // assume json = [{ id: 1, name: "India" }, ...]
     return json.map((c: any) => ({
@@ -49,7 +59,17 @@ export default function AddEmpSlider({
   }, []);
 
   const fetchDepartments = useCallback(async (): Promise<Option[]> => {
-    const res = await fetch("/api/tourbill/admin/deptlist");
+    const token = localStorage.getItem('authToken');
+    const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+    const res = await fetch(`${apiUrl}/touradmin/deptlist`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+    });
+    
     const json = await res.json();
     return json.map((c: any) => ({
       value: String(c.slug),
@@ -58,7 +78,16 @@ export default function AddEmpSlider({
   }, []);
 
   const fetchManagers = useCallback(async (): Promise<Option[]> => {
-    const res = await fetch("/api/tourbill/admin/mgrlist");
+    const token = localStorage.getItem('authToken');
+    const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+    const res = await fetch(`${apiUrl}/touradmin/mgrlist`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+    });
     const json = await res.json();
     return json.map((c: any) => ({
       value: String(c.userid),
@@ -67,7 +96,17 @@ export default function AddEmpSlider({
   }, []);
 
   const fetchBranches = useCallback(async (): Promise<Option[]> => {
-    const res = await fetch("/api/tourbill/admin/branchlist");
+    const token = localStorage.getItem('authToken');
+    const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+    const res = await fetch(`${apiUrl}/touradmin/branchlist`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+    });
+    
     const json = await res.json();
     return json.map((c: any) => ({
       value: String(c.branch_name),
@@ -113,10 +152,14 @@ const handleSubmit = async () => {
     if (!form) return;
     try {
       setIsSubmitting(true);
-      const res = await fetch(`/api/tourbill/admin/empadd`, {
+      const token = localStorage.getItem('authToken');
+      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+      const res = await fetch(`${apiUrl}/touradmin/empadd`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(form),
       });

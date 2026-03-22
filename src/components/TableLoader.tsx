@@ -1,4 +1,4 @@
-import { Box, Center, Spinner, Text, VStack } from '@chakra-ui/react';
+import { Center, Spinner, Text, VStack } from '@chakra-ui/react';
 
 interface TableLoaderProps {
   isLoading: boolean;

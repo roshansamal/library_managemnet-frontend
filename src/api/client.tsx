@@ -6,7 +6,7 @@ export interface ApiUser {
 }
 
 export async function fetchUsers(): Promise<ApiUser[]> {
-  const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/users`, {
+  const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users`, {
     headers: { Accept: 'application/json' },
   });
 

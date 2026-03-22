@@ -1,5 +1,5 @@
 // src/components/DashboardLayout.tsx
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import {
   Avatar,
   Box,
@@ -20,6 +20,8 @@ import {
 } from 'react-icons/fi';
 import { Outlet } from 'react-router-dom';
 import { SidebarMenu } from './SidebarMenu'
+// import type { MenuItem } from '../types/Menu';
+// import { SidebarDBMenu } from './SidebarDBMenu';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -27,32 +29,54 @@ interface DashboardLayoutProps {
 }
 
 // For Breadcrumb Setup
-const pageConfig = {
-  home: { title: 'Dashboard', breadcrumb: ['Home'] },
-  tours: { title: 'Tours', breadcrumb: ['Home', 'Tours'] },
-  'bill-submitted': { title: 'Bill Submitted', breadcrumb: ['Home', 'Tours', 'Bill Submitted'] },
-  approval: { title: 'Approvals', breadcrumb: ['Home', 'Tours', 'Approvals'] },
-  // ...
-} as const;
+// const pageConfig = {
+//   home: { title: 'Dashboard', breadcrumb: ['Home'] },
+//   tours: { title: 'Tours', breadcrumb: ['Home', 'Tours'] },
+//   'bill-submitted': { title: 'Bill Submitted', breadcrumb: ['Home', 'Tours', 'Bill Submitted'] },
+//   approval: { title: 'Approvals', breadcrumb: ['Home', 'Tours', 'Approvals'] },
+//   // ...
+// } as const;
 
-type PageKey = keyof typeof pageConfig;
+// type PageKey = keyof typeof pageConfig;
 
-export default function DashboardLayout({ children, onLogout }: DashboardLayoutProps) {
-  const [currentPage, setCurrentPage] = useState<PageKey>('home');
+// export default function DashboardLayout({ children, onLogout }: DashboardLayoutProps) {
+export default function DashboardLayout({ onLogout }: DashboardLayoutProps) {
+  // const [menu, setMenu] = useState<MenuItem[]>([]); //for DB Menu
+  // const [currentPage, setCurrentPage] = useState<PageKey>('home');
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const sidebarBg = useColorModeValue('white', 'gray.900');
-  const topbarBg = useColorModeValue('white', 'gray.900');
+  // const sidebarBg = useColorModeValue('white', 'gray.900');
+  // const topbarBg = useColorModeValue('white', 'gray.900');
   //const topbarBg = useColorModeValue('grey.500', 'gray.900');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
+  const [user, setUser] = useState<{ name: string; email: string; avatar?: string } | null>(null);
+  useEffect(() => {
+    //--For DB menu---
+    // const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000/api';
+    // const token = localStorage.getItem('authToken');
+    // fetch(`${apiUrl}/touradmin/menu-for-user`, {  // your endpoint
+    //   headers: { Authorization: `Bearer ${token}` },
+    // })
+    //     .then((res) => res.json())
+    //     .then(setMenu);
+    // }, []);
 
+    // <SidebarDBMenu isCollapsed={isCollapsed} items={menu} />;
+    //----------
+    const raw = localStorage.getItem('user');
+    if (raw) {
+      try {
+        setUser(JSON.parse(raw));
+      } catch {
+        setUser(null);
+      }
+    }
+  }, []);
+  
   return (
     <Flex h="100vh" bg={useColorModeValue('gray.50', 'gray.800')}>
       {/* Sidebar */}
       <Box
         as="nav"
-        //bg={sidebarBg}
-        //bg={"blue.800"}
-        //color={"white"}
         borderRightWidth="1px"
         borderColor={borderColor}
         w={isCollapsed ? '72px' : '260px'}
@@ -138,8 +162,8 @@ export default function DashboardLayout({ children, onLogout }: DashboardLayoutP
             <HStack spacing={2}>
               <Avatar
                 size="sm"
-                name="Admin User"
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e"
+                name={user?.name ?? 'User'}
+                src={user?.avatar || undefined}   // 👈 avatar from localStorage
               />
               <VStack
                 spacing={0}
@@ -147,10 +171,10 @@ export default function DashboardLayout({ children, onLogout }: DashboardLayoutP
                 display={{ base: 'none', md: 'flex' }}
               >
                 <Text fontSize="sm" fontWeight="medium">
-                  Admin User
+                  {user?.name ?? 'User'}             {/* 👈 name */}
                 </Text>
                 <Text fontSize="xs">
-                  admin@pollutech.in
+                  {user?.email ?? ''}
                 </Text>
               </VStack>
             </HStack>

@@ -1,3 +1,4 @@
+// src/App.tsx
 import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginScreen from './components/LoginScreen';
@@ -28,6 +29,8 @@ import Customers from './pages/admin/Customers';
 import EmailUpdate from './pages/admin/EmailUpdate';
 import ChangeTourStatus from './pages/admin/ChangeTourStatus';
 import ChangeOdometer from './pages/admin/ChangeOdometer';
+import PfrUploaded from './pages/pfr/pfr_uploaded';
+import ChangeTiming from './pages/admin/ChangeTiming';
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -45,12 +48,16 @@ export default function App() {
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
+    localStorage.removeItem('name');
+    localStorage.removeItem('email');
+    localStorage.removeItem('avatar');
     setIsLoggedIn(false);
   };
 
   if (!isLoggedIn) {
-    return <LoginScreen />;
+    // return <LoginScreen />;
+    // IMPORTANT: pass handleLogin into LoginScreen and don't render Routes here
+    return <LoginScreen onLogin={handleLogin} />;
   }
 
   // return isLoggedIn ? (
@@ -60,31 +67,43 @@ export default function App() {
   // );
   return (
     <Routes>
-      {/* redirect root to /dashboard */}
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
-
-      {/* layout route: sidebar + topbar */}
-      <Route path="/" element={<DashboardLayout onLogout={() => { } } children={undefined} />}>
+        {/* redirect root to /dashboard */}
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        {/* layout route: sidebar + topbar */}
+        {/* <Route path="/" element={<DashboardLayout onLogout={() => { } } children={undefined} />}> */}
+        <Route path="/" element={<DashboardLayout onLogout={handleLogout} children={undefined} />}>
+        <Route path="dashboard" element={<DashboardHome />} />
         {/* Admin Section */}
-         <Route path="admin/employees" element={<Employees />} />
-         <Route path="admin/customers" element={<Customers />} />
-         <Route path="/admin/emailupdate" element={<EmailUpdate />} />
-         <Route path="/admin/change-tour-status" element={<ChangeTourStatus />} />
-         <Route path="/admin/change-odometer" element={<ChangeOdometer />} />
-         
+        <Route path="admin/employees" element={<Employees />} />
+        <Route path="admin/customers" element={<Customers />} />
+        <Route path="/admin/emailupdate" element={<EmailUpdate />} />
+        <Route path="/admin/change-timing" element={<ChangeTiming />} />
+        <Route path="/admin/change-tour-status" element={<ChangeTourStatus />} />
+        <Route path="/admin/change-odometer" element={<ChangeOdometer />} />
+
+        {/* PFR Section */}
+        <Route path="pfr/list" element={<PfrUploaded />} />
+
+        {/* Tour Manager Section */}
+        <Route path="/mgr/tours-submitted" element={<TourSubmitted />} />
+        <Route path="/mgr/tours-approved" element={<ToursApproved />} />
+        <Route path="/mgr/tours-ongoing" element={<ToursOngoing />} />
+        <Route path="/mgr/tours-completed" element={<ToursCompleted />} />
+          
         {/* Tours Section */}
         <Route path="mgr/tourlist" element={<TourListPage />} />
         <Route path="mgr/toursubmitted" element={<TourSubmitted />} />
         <Route path="/mgr/toursapproved" element={<ToursApproved />} />
         <Route path="/mgr/tourongoing" element={<ToursOngoing />} />
         <Route path="/mgr/tourcompleted" element={<ToursCompleted />} />
+        
         {/* Bills Section */}
-        <Route path="dashboard" element={<DashboardHome />} />
+        {/* <Route path="dashboard" element={<DashboardHome />} /> */}
         <Route path="users" element={<UsersPage />} />
         <Route path="reports/transactions" element={<FilteredTablePage />} />
-        <Route path="mgr/billsubmitted" element={<BillSubmitted />} />
-        <Route path="mgr/billapproved" element={<MgrBillApproved />} />
-        <Route path="mgr/billreturned" element={<MgrBillReturned />} />
+        <Route path="mgr/bill-submitted" element={<BillSubmitted />} />
+        <Route path="mgr/bill-approved" element={<MgrBillApproved />} />
+        <Route path="mgr/bill-returned" element={<MgrBillReturned />} />
         {/* Finance Section */}
         <Route path="finance/billpending" element={<FinPendingBills />} />
         <Route path="finance/billapproved" element={<FinBillApproved />} />
@@ -98,8 +117,6 @@ export default function App() {
         <Route path="report/machine-ageing-report" element={<MachineAgeingReport />} />
         {/* Revenue Section */}
         <Route path="revenue/addbill" element={<RevenueAddBill />} />
-        
-        
         {/* <Route path="reports/sales" element={<ReportsSalesPage />} /> */}
         {/* add other pages matching your sidebarConfig paths */}
       </Route>

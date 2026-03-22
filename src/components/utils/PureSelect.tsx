@@ -1,6 +1,6 @@
 // components/PureSelect.tsx
 import { FormControl, FormLabel } from '@chakra-ui/react';
-import React, { type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 export type Option = { value: string|number; label: string };
 

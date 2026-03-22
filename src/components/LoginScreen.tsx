@@ -17,14 +17,19 @@ import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 interface LoginFormData {
   email: string;
   password: string;
+  app_id:string;
 }
 
 interface LoginScreenProps {
   onLogin?: () => void;
 }
 
+function joinUrl(base: string, path: string) {
+  return `${base.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`;
+}
+
 export default function LoginScreen({ onLogin }: LoginScreenProps) {
-  const [formData, setFormData] = useState<LoginFormData>({ email: '', password: '' });
+  const [formData, setFormData] = useState<LoginFormData>({ app_id:'tourbill',email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
@@ -75,34 +80,40 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
     try {
-      // Real API call (Laravel / Supabase / etc.)
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.token) {
-        // Store auth token
-        localStorage.setItem('authToken', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        
+      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+      // await fetch(`${apiUrl}/sanctum/csrf-cookie`,{
+      //   credentials: 'include',
+      // });
+       //const response = await fetch(`${apiUrl}/login`,
+       const response = await fetch(joinUrl(apiUrl, '/api/login'),
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          credentials: 'include',  // if using Sanctum cookies
+          body: JSON.stringify(formData),
+        }
+      );
+      const res = await response.json();
+      //console.log(res.token);//working
+      //console.log(res.data.avatar); //Working
+      if (response.ok && res.token) {
+        localStorage.setItem('authToken', res.token);
+        // localStorage.setItem('name', JSON.stringify(res.data.name));
+        // localStorage.setItem('email', JSON.stringify(res.data.email));
+        // localStorage.setItem('avatar', JSON.stringify(res.data.avatar));
+        localStorage.setItem('user', JSON.stringify(res.data));
         toast({
           title: 'Login successful!',
           status: 'success',
           duration: 2000,
           isClosable: true,
         });
-        
         onLogin?.(); // Navigate to Dashboard
-        
+        // navigate('/dashboard');
       } else {
         toast({
-          title: data.message || 'Invalid credentials',
+          title: res.message || 'Invalid credentials',
           status: 'error',
           duration: 4000,
           isClosable: true,
@@ -111,7 +122,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
     } catch (error) {
       toast({
         title: 'Login failed',
-        description: 'Server error. Try again.',
+        description: 'Server error. Try again.'+error,
         status: 'error',
         duration: 4000,
         isClosable: true,
@@ -120,7 +131,6 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
       setIsLoading(false);
     }
   };
-
 
   return (
     <Flex minH="100vh" align="center" justify="center" bg="gray.50" p={4}>
@@ -132,6 +142,17 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
           
           <form onSubmit={handleSubmit}>
             <Stack spacing={4}>
+              <FormControl id="app_id" isRequired hidden>
+                <FormLabel>App ID</FormLabel>
+                <Input
+                  type="text"
+                  value={formData.app_id}
+                  onChange={(e) => setFormData({ ...formData, app_id: e.target.value })}
+                  placeholder="admin@example.com"
+                  focusBorderColor="blue.400"
+                  autoComplete="appid"
+                />
+              </FormControl>
               <FormControl id="email" isRequired>
                 <FormLabel>Email</FormLabel>
                 <Input

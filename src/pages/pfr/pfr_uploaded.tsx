@@ -1,13 +1,13 @@
 // src/pages/FilteredTablePage.tsx
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, Spinner, TableContainer } from '@chakra-ui/react';
+// import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/react';
 // import {
 //   Select,
 //   useDisclosure,
 // } from '@chakra-ui/react';
 import { useEffect, useMemo, useState } from 'react';
 import {
+  Box,
   HStack,
-
   Table,
   Thead,
   Tbody,
@@ -18,9 +18,13 @@ import {
   IconButton,
   Text,
   Select as ChakraSelect,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
 } from '@chakra-ui/react';
 import {
   createColumnHelper,
+  // createColumnHelper,
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
@@ -28,27 +32,28 @@ import {
   // type Row,
   type SortingState,
 } from '@tanstack/react-table';
-import { FiChevronLeft, FiChevronRight, FiEdit, FiEye } from 'react-icons/fi';
-import { FaLocationDot } from 'react-icons/fa6';
+import { FiChevronLeft, FiChevronRight,  } from 'react-icons/fi';
+import { FaDownload, } from 'react-icons/fa6';
+import type { PfrUploadsType } from '../../types/PfrUploadsType';
 // import { useToast } from '@chakra-ui/react';
-import ViewTourDetailsSlider from '../../components/ViewTourDetailsSlider';
-import type { TourMasterType } from '../../types/TourMasterType';
-import { ChevronRightIcon } from '@chakra-ui/icons/ChevronRight';
 // import { MdOutlineApproval } from 'react-icons/md';
 // import { FcApproval } from 'react-icons/fc';
 // import { RiEjectFill } from 'react-icons/ri';
 // import { GiCancel, GiReturnArrow } from 'react-icons/gi';
 
 type ApiResponse = {
-  data: TourMasterType[];
+  data: PfrUploadsType[];
   current_page: number;
   per_page: number;
   total: number;
 };
 
-const columnHelper = createColumnHelper<TourMasterType>();
+const columnHelper = createColumnHelper<PfrUploadsType>();
+// import ViewGpsSlider from '../components/ViewGpsSlider';
+// import ViewTourDetailsSlider from '../components/ViewTourDetailsSlider';
+// import type { TourMasterType } from '../types/TourMasterType';
 
-export default function ToursRejected() {
+export default function PfrUploaded() {
   // const [startDate, setStartDate] = useState('');
   // const [endDate, setEndDate] = useState('');
   //const [selectedUser, setSelectedUser] = useState('');
@@ -56,9 +61,9 @@ export default function ToursRejected() {
 
 
   // const toast = useToast();
-  // const [rows, setRows] = useState<TourMasterType[]>([]);
+  // const [rows, setRows] = useState<PfrUploadsType[]>([]);
   // type UserOption = { userid: string };
-  // const [users, setUsers] = useState<UserOption[]>([]);
+  //const [users, setUsers] = useState<UserOption[]>([]);
   // const [username, setUsername] = useState('');
   // Used for Side Drawer Start
   // const { isOpen, onOpen, onClose } = useDisclosure();
@@ -66,7 +71,7 @@ export default function ToursRejected() {
   // const [reloadKey, setReloadKey] = useState(0); //For Forcing Screen Update
   //--------------------------------
   //Used for Edit Slide Drawer
-  const [selectedRow, setSelectedRow] = useState<TourMasterType | null>(null);
+  // const [selectedRow, setSelectedRow] = useState<PfrUploadsType | null>(null);
   // const [isTourEditOpen, setIsTourEditOpen] = useState(false);
   // const openTourEdit = (row: TourMasterType) => {
   //   setSelectedRow(row);
@@ -76,26 +81,26 @@ export default function ToursRejected() {
   //   setIsTourEditOpen(false);
   //   setSelectedRow(null);
   // };
-  function fetchDataAgain(): void {
-    handleFetch();
-  }
-  //---Tour View Slider Begin Here-----------------------------
-  const [isTourViewOpen, setIsTourViewOpen] = useState(false);
-  const openTourView = (row: TourMasterType) => {
-    setSelectedRow(row);
-    setIsTourViewOpen(true);
-  };
-  const closeTourView = () => {
-    setIsTourViewOpen(false);
-    setSelectedRow(null);
-  };
+  // function fetchDataAgain(): void {
+  //   handleFetch();
+  // }
+  // //---Tour View Slider Begin Here-----------------------------
+  // const [isTourViewOpen, setIsTourViewOpen] = useState(false);
+  // const openTourView = (row: TourMasterType) => {
+  //   setSelectedRow(row);
+  //   setIsTourViewOpen(true);
+  // };
+  // const closeTourView = () => {
+  //   setIsTourViewOpen(false);
+  //   setSelectedRow(null);
+  // };
   //---Tour View Slider Ends Here-----------------------------
   //---Tour Gps Slider Begin Here-----------------------------
   // const [isTourGpsOpen, setIsTourGpsOpen] = useState(false);
-  const openTourGps = (row:TourMasterType) => {
-    setSelectedRow(row);
-    // setIsTourGpsOpen(true);
-  };
+  // const openTourGps = (row:TourMasterType) => {
+  //   setSelectedRow(row);
+  //   setIsTourGpsOpen(true);
+  // };
   // const closeTourGps = () => {
   //   setIsTourGpsOpen(false);
   //   setSelectedRow(null);
@@ -183,7 +188,7 @@ export default function ToursRejected() {
   // });
 
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [data, setData] = useState<TourMasterType[]>([]);
+  const [data, setData] = useState<PfrUploadsType[]>([]);
   const [pageIndex, setPageIndex] = useState(0); // zero-based
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
@@ -228,208 +233,83 @@ export default function ToursRejected() {
   //     }
   //   : { sort_by: '', sort_dir: '' };
 
+  // useEffect(() => {
+  //   const fetchUsers = async () => {
+  //     const res = await fetch('/api/pfr/pfrlist');
+  //     const json: PfrUploadsType[] = await res.json();
+  //     setRows(json);
+  //   };
+  //   fetchUsers();
+  // }, []);
   useEffect(() => {
-    // const fetchUsers = async () => {
-    //   const res = await fetch('/api/tourbill/tourlist');
-    //   const json: UserOption[] = await res.json();
-    //   setUsers(json);
-    // };
-    //fetchUsers();
     handleFetch();
   }, []);
   
-  // Columns, including selection column
   const columns = useMemo(
     () => [
-      // columnHelper.display({
-      //   id: 'select',
-      //   header: () => (
-      //     <input
-      //       type="checkbox"
-      //       checked={allSelected}
-      //       onChange={toggleAll}
-      //     />
-      //   ),
-      //   cell: ({ row }) => {
-      //     const rowId = row.original.id;
-      //     return (
-      //       <input
-      //         type="checkbox"
-      //         checked={isSelected(rowId)}
-      //         onChange={() => toggleOne(rowId)}
-      //       />
-      //     );
-      //   },
-      // }),
+      columnHelper.display({
+        id: 'select',
+        header: () => (
+          <input
+            type="checkbox"
+            checked={allSelected}
+            onChange={toggleAll}
+          />
+        ),
+        cell: ({ row }) => {
+          const rowId = row.original.id;
+          return (
+            <input
+              type="checkbox"
+              checked={isSelected(rowId)}
+              onChange={() => toggleOne(rowId)}
+            />
+          );
+        },
+      }),
       columnHelper.accessor('id', {
-        header: 'TourId',
+        header: 'ID',
         cell: (info) => JSON.stringify(info.getValue()),
       }),
-      columnHelper.display({
-        id: 'tour',
-        header: 'Edit',
-        cell: (info) => {
-          const rowData = info.row.original;
-          return (
-            <IconButton
-              aria-label="Edit"
-              icon={<FiEdit />}
-              size="sm"
-              variant="ghost"
-              _hover={{bg:"black",textColor:"white"}}
-              onClick={() => {
-                //openTourEdit(rowData)
-                console.log(rowData);
-              }}
-            />
-          );
-        },
+       columnHelper.accessor('upload_date', {
+        header: 'Upload Date',
+        cell: (info) => info.getValue(),
       }),
-      columnHelper.display({
-        id: 'view',
-        header: 'View',
-        cell: (info) => {
-          const rowData = info.row.original;
-          return (
-            <IconButton
-              aria-label="View"
-              icon={<FiEye />}
-              size="sm"
-              variant="ghost"
-              _hover={{bg:"black",textColor:"white"}}
-              onClick={() => {
-                openTourView(rowData)
-              }}
-            />
-          );
-        },
+      columnHelper.accessor('filename', {
+        header: 'Filename',
+        cell: (info) => info.getValue(),
       }),
 
       columnHelper.display({
-        id: 'gps',
-        header: 'GPS',
+        id: 'download_url',
+        header: 'Download',
         cell: (info) => {
           const rowData = info.row.original;
+          const url = rowData.download_url; // string URL
           return (
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            download          // hint browser to download
+          >
             <IconButton
-              color="red"
-              aria-label="GPS"
-              icon={<FaLocationDot />}
+              color="black"
+              aria-label="download"
+              icon={<FaDownload />}
               size="sm"
               variant="ghost"
-              _hover={{bg:"black",textColor:"white"}}
-              onClick={() => {
-                openTourGps(rowData)
-              }}
+              _hover={{ bg: 'black', textColor: 'white' }}
             />
-          );
+          </a>
+        );
         },
       }),
-      // columnHelper.display({
-      //   id: 'approve',
-      //   header: 'Approve',
-      //   cell: (info) => {
-      //     const rowData = info.row.original;
-      //     return (
-      //       <IconButton
-      //         color="blue"
-      //         aria-label="APPROVE"
-      //         icon={<FaCheck />}
-      //         size="sm"
-      //         variant="ghost"
-      //         _hover={{bg:"black",textColor:"white"}}
-      //         onClick={() => {
-      //           openTourApproval(rowData)
-      //         }}
-      //       />
-      //     );
-      //   },
-      // }),
-      // columnHelper.display({
-      //   id: 'return',
-      //   header: 'Return',
-      //   cell: (info) => {
-      //     const rowData = info.row.original;
-      //     return (
-      //       <IconButton
-      //         color="black"
-      //         aria-label="RETURN"
-      //         icon={<FaUndo />}
-      //         size="sm"
-      //         variant="ghost"
-      //         _hover={{bg:"black",textColor:"white"}}
-      //         onClick={() => {
-      //           openBillReturn(rowData)
-      //         }}
-      //       />
-      //     );
-      //   },
-      // }),
-
-      columnHelper.accessor('userid', {
-        header: 'Engineer',
+      columnHelper.accessor('uploaded_by', {
+        header: 'Uploaded By',
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor('submitted_on', {
-        header: 'Submitted On',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('customer_name', {
-        header: 'Customer Name',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('purpose_of_visit', {
-        header: 'Purpose Of Visit',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('machine_model', {
-        header: 'Machine Model',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('machine_serial', {
-        header: 'Machine Serial',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('complaint_dtls', {
-        header: 'Complaint Details',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('service_type', {
-        header: 'Service Type',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('travel_from', {
-        header: 'Travel From',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('travel_to', {
-        header: 'Travel To',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('mode_of_travel', {
-        header: 'Mode Of Travel',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('ticket_status', {
-        header: 'Ticket Status',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('visiting_role', {
-        header: 'Visiting Role',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('team_members', {
-        header: 'Team Members',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('tour_start_date', {
-        header: 'Tour Start Date',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('tour_end_date', {
-        header: 'Tour End Date',
-        cell: (info) => info.getValue(),
-      }),
+     
     ],
     [allSelected, isSelected, toggleAll, toggleOne],
   );
@@ -456,16 +336,19 @@ export default function ToursRejected() {
     try {
       setIsLoading(true);
       //console.log('Info:',selectedUser);
-      const res = await fetch('/api/tourbill/tours-by-status', {
-          method: 'POST',
+      const token = localStorage.getItem('authToken');
+      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+      const res = await fetch(`${apiUrl}/api/pfr/pfrlist`, {
+          method: 'GET',
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
-            //Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            "ticket_status":"Mgr Rejected"
-          }),
+          // body: JSON.stringify({
+          //   "start_date":startDate,
+          //   "end_date":endDate,
+          // }),
         });
       if (!res.ok) {
         console.error('Error:', res.status, await res.text());
@@ -485,179 +368,61 @@ export default function ToursRejected() {
 
   return (
     <>
-    <Breadcrumb spacing="1" separator={<ChevronRightIcon />} fontWeight="normal" fontSize={"sm"} mb={1} color={"blue.700"}>
+    <Breadcrumb fontWeight="semibold" fontSize={"sm"} ml={1} mb={1} color={'blue.500'}>
       <BreadcrumbItem>
         <BreadcrumbLink href="/">Home</BreadcrumbLink>
       </BreadcrumbItem>
       <BreadcrumbItem>
-        <BreadcrumbLink href="/report">Report</BreadcrumbLink>
+        <BreadcrumbLink href="/">PFR</BreadcrumbLink>
       </BreadcrumbItem>
       <BreadcrumbItem isCurrentPage>
-        <BreadcrumbLink>Tours Rejected</BreadcrumbLink>
+        <BreadcrumbLink>PFR Uploads</BreadcrumbLink>
       </BreadcrumbItem>
     </Breadcrumb>
+    <Box borderWidth="1px" borderRadius="md" maxH="500px" overflow="auto" p={1}>
+      {/* Filters */}
+      {/* <HStack spacing={1} mb={4} align="flex-end" justifyContent={"left"}>
+         <Box>
+          <Text mb={1} fontSize="sm" fontWeight="medium">
+            From Date
+          </Text>
+          <Input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            //min={startDate || undefined}
+            bg="cyan.50"
+            h={8}
+          />
+        </Box>
+        <Box>
+          <Text mb={1} fontSize="sm" fontWeight="medium">
+            To Date
+          </Text>
+          <Input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            min={startDate || undefined}
+            bg="cyan.50"
+            h={8}
+          />
+        </Box>
+        <Button colorScheme="blue" onClick={handleFetch} h={8} fontSize={"sm"}>
+          <FaFilter/>Apply
+        </Button>
+      </HStack> */}
 
-    <TableContainer
-      maxH="80vh"
-      overflowX={{ base: "auto", md: "auto" }}  // Always scroll on mobile
-      overflowY="auto"
-      w="full"
-      whiteSpace="nowrap"  // Prevent text wrap
-    >
-      {isLoading && (
-          <HStack p={4}>
-            <Spinner size="sm" />
-            <Text>Loading...</Text>
-          </HStack>
-        )}
+      {/* Table */}
+      <Box overflow="auto">
         <Table
           size="sm"
+          minW="1200px"
           variant="striped"
-          colorScheme="gray"
-          maxH="75vh"
-          w="100vw"
-          minW={{ base: "800px", md: "max-content" }}
-        >
-          <Thead bg="gray.700" top={0} zIndex={1}>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <Tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  const canSort = header.column.getCanSort();
-                  const sortDir = header.column.getIsSorted(); // 'asc' | 'desc' | false
-                  return (
-                    <Th
-                      key={header.id}
-                      cursor={canSort ? 'pointer' : 'default'}
-                      onClick={
-                        canSort
-                          ? header.column.getToggleSortingHandler()
-                          : undefined
-                      }
-                      whiteSpace="nowrap"
-                      color="white"
-                    >
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
-                      {sortDir === 'asc' && ' ▲'}
-                      {sortDir === 'desc' && ' ▼'}
-                    </Th>
-                  );
-                })}
-              </Tr>
-            ))}
-          </Thead>
-
-          <Tbody>
-            {table.getRowModel().rows.length === 0 && !isLoading && (
-              <Tr>
-                <Td colSpan={columns.length}>
-                  <Text textAlign="center" py={4}>
-                    No records found.
-                  </Text>
-                </Td>
-              </Tr>
-            )}
-            {table.getRowModel().rows.map((row) => (
-              <Tr key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <Td key={cell.id}>
-                    {flexRender(
-                      cell.column.columnDef.cell,
-                      cell.getContext(),
-                    )}
-                  </Td>
-                ))}
-              </Tr>
-            ))}
-          </Tbody>
-          <Tfoot>
-            <Tr>
-              <Td colSpan={columns.length}>
-                <HStack justify="flex-start" align="start">
-                  <HStack>
-                    <IconButton
-                      aria-label="Previous page"
-                      icon={<FiChevronLeft />}
-                      size="sm"
-                      onClick={() => canPrev && setPageIndex((p) => p - 1)}
-                      isDisabled={!canPrev}
-                      bg={"black"}
-                      color={"white"}
-
-                    />
-                    <IconButton
-                      aria-label="Next page"
-                      icon={<FiChevronRight />}
-                      size="sm"
-                      onClick={() => canNext && setPageIndex((p) => p + 1)}
-                      isDisabled={!canNext}
-                      bg={"black"}
-                      color={"white"}
-                    />
-                    <Text fontSize="sm">
-                      Page {pageIndex + 1} of {pageCount}
-                    </Text>
-                  </HStack>
-                  <HStack ml={"20"}>
-                    <Text fontSize="sm">Rows per page:</Text>
-                    <ChakraSelect
-                      bg={"cyan.100"}
-                      size="sm"
-                      width="80px"
-                      value={pageSize}
-                      onChange={(e) => {
-                        setPageSize(Number(e.target.value));
-                        setPageIndex(0);
-                      }}
-                    >
-                      {[10, 20, 50].map((size) => (
-                        <option key={size} value={size}>
-                          {size}
-                        </option>
-                      ))}
-                    </ChakraSelect>
-                    <Text fontSize="sm">Total: {total}</Text>
-                  </HStack>
-                </HStack>
-              </Td>
-            </Tr>
-          </Tfoot>
-        </Table>
-
-    </TableContainer>
-    {/* <Box borderWidth="1px" borderRadius="md" maxH="600px" overflow="auto" p={1}>
-      <Box h="100vh" w="100vw"
-        maxH="75vh" 
-        overflowY="auto"
-        sx={{
-          '&::-webkit-scrollbar': {
-            width: '8px',  // Keep horizontal thin
-          },
-          '&::-webkit-scrollbar:vertical': {
-            width: '0px',  // Hide vertical completely
-          },
-          '&::-webkit-scrollbar:horizontal': {
-            height: '8px', // Keep horizontal visible
-          },
-          scrollbarWidth: 'none',  // Firefox vertical hide
-          msOverflowStyle: 'none', // Edge vertical hide
-        }}
-      >
-        {isLoading && (
-          <HStack p={4}>
-            <Spinner size="sm" />
-            <Text>Loading...</Text>
-          </HStack>
-        )}
-        <Table
-          size="sm"
-          variant="striped"
-          colorScheme="gray"
+          //colorScheme="gray"
+          colorScheme="green"
           maxH="50vh"
-          w="100vw"
-          minW={{ base: "800px", md: "max-content" }}
+          
         >
           <Thead bg="gray.700" top={0} zIndex={1}>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -676,6 +441,7 @@ export default function ToursRejected() {
                       }
                       whiteSpace="nowrap"
                       color="white"
+                      py="1"
                     >
                       {flexRender(
                         header.column.columnDef.header,
@@ -694,16 +460,17 @@ export default function ToursRejected() {
             {table.getRowModel().rows.length === 0 && !isLoading && (
               <Tr>
                 <Td colSpan={columns.length}>
-                  <Text textAlign="center" py={4}>
+                  <Text textAlign="center" py={1}>
                     No records found.
                   </Text>
                 </Td>
               </Tr>
             )}
             {table.getRowModel().rows.map((row) => (
-              <Tr key={row.id}>
+              <Tr key={row.id} h="10">
                 {row.getVisibleCells().map((cell) => (
-                  <Td key={cell.id}>
+                  // <Td key={cell.id}>
+                    <Td key={cell.id} lineHeight="1" py="0.5">  {/* Add lineHeight here */}
                     {flexRender(
                       cell.column.columnDef.cell,
                       cell.getContext(),
@@ -752,7 +519,8 @@ export default function ToursRejected() {
                         setPageIndex(0);
                       }}
                     >
-                      {[10, 20, 50].map((size) => (
+                      {/* {[10, 20, 50].map((size) => ( */}
+                       {[5, 10, 25].map((size) => (
                         <option key={size} value={size}>
                           {size}
                         </option>
@@ -765,13 +533,13 @@ export default function ToursRejected() {
             </Tr>
           </Tfoot>
         </Table>
-      </Box> */}
-    <ViewTourDetailsSlider
+      </Box>
+    {/* <ViewTourDetailsSlider
       isOpen={isTourViewOpen}
       onClose={closeTourView}
       tourId={selectedRow?.id ?? 0}
       onUpdated={fetchDataAgain}
-    />
+    />; */}
     {/* <ViewTourBillSlider
       isOpen={isTourViewOpen}
       onClose={closeTourView}
@@ -796,7 +564,7 @@ export default function ToursRejected() {
       initialData={selectedRow}
       onUpdated={fetchDataAgain}
     />; */}
-    {/* </Box> */}
+    </Box>
     </>
   );
 }

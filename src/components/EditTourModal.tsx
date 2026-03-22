@@ -51,7 +51,8 @@ export default function EditTourModal({
   const handleSave = async () => {
     if (!form) return;
     try {
-      const res = await fetch(`/api/tours/${form.id}`, {
+      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+      const res = await fetch(`${apiUrl}/api/touradmin/tours/${form.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),

@@ -1,14 +1,14 @@
 // src/pages/FilteredTablePage.tsx
-import {
-  Drawer,
-  DrawerBody,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  useDisclosure,
-} from '@chakra-ui/react';
+// import {
+//   Drawer,
+//   DrawerBody,
+//   DrawerFooter,
+//   DrawerHeader,
+//   DrawerOverlay,
+//   DrawerContent,
+//   DrawerCloseButton,
+//   useDisclosure,
+// } from '@chakra-ui/react';
 import { useEffect, useMemo, useState } from 'react';
 import {
   Box,
@@ -34,12 +34,12 @@ import {
   useReactTable,
   type SortingState,
 } from '@tanstack/react-table';
-import { FiChevronLeft, FiChevronRight, FiEdit, FiEye } from 'react-icons/fi';
-import { FaBook, FaCheck, FaCheckDouble, FaFilter, FaLocationDot, FaObjectGroup } from 'react-icons/fa6';
-import { MdOutlineApproval } from 'react-icons/md';
-import { FcApproval } from 'react-icons/fc';
-import { RiEjectFill } from 'react-icons/ri';
-import { GiCancel, GiReturnArrow } from 'react-icons/gi';
+import { FiChevronLeft, FiChevronRight, FiEye } from 'react-icons/fi';
+import {  FaCheck, FaCheckDouble, FaFilter, FaLocationDot,  } from 'react-icons/fa6';
+// import { MdOutlineApproval } from 'react-icons/md';
+// import { FcApproval } from 'react-icons/fc';
+// import { RiEjectFill } from 'react-icons/ri';
+// import { GiCancel, GiReturnArrow } from 'react-icons/gi';
 
 type ApiResponse = {
   data: RecordItem[];
@@ -52,30 +52,30 @@ const columnHelper = createColumnHelper<RecordItem>();
 // import EditSlider from '../components/EditSlider';
 import type { RecordItem } from '../types/RecordItem';
 // import EditSlider from '../components/EditTourSlider';
-import { FaAngleDoubleUp, FaMailBulk, FaUndo } from 'react-icons/fa';
+// import { FaUndo } from 'react-icons/fa';
 import ViewTourSlider from '../components/ViewTourSlider';
 // import EditTourSlider from '../components/EditTourSlider';
-import ViewGpsSlider from '../components/ViewGpsSlider';
+// import ViewGpsSlider from '../components/ViewGpsSlider';
 //import ApproveTourSlider from '../components/ApproveTourSlider';
-import { GrReturn } from 'react-icons/gr';
+// import { GrReturn } from 'react-icons/gr';
 
 export default function MgrTourList() {
   // Used for Side Drawer Start
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [editingRow, setEditingRow] = useState<RecordItem | null>(null);
+  // const { isOpen, onOpen, onClose } = useDisclosure();
+  // const [setEditingRow] = useState<RecordItem | null>(null);
   const [reloadKey, setReloadKey] = useState(0); //For Forcing Screen Update
   //--------------------------------
   //Used for Edit Slide Drawer
   const [selectedRow, setSelectedRow] = useState<RecordItem | null>(null);
-  const [isTourEditOpen, setIsTourEditOpen] = useState(false);
-  const openTourEdit = (row: RecordItem) => {
-    setSelectedRow(row);
-    setIsTourEditOpen(true);
-  };
-  const closeTourEdit = () => {
-    setIsTourEditOpen(false);
-    setSelectedRow(null);
-  };
+  // const [ setIsTourEditOpen] = useState(false);
+  // const openTourEdit = (row: RecordItem) => {
+  //   setSelectedRow(row);
+  //   setIsTourEditOpen(true);
+  // };
+  // const closeTourEdit = () => {
+  //   setIsTourEditOpen(false);
+  //   setSelectedRow(null);
+  // };
   function fetchDataAgain(): void {
     throw new Error('Function not implemented.');
   }
@@ -91,26 +91,26 @@ export default function MgrTourList() {
   };
   //---Tour View Slider Ends Here-----------------------------
   //---Tour Gps Slider Begin Here-----------------------------
-  const [isTourGpsOpen, setIsTourGpsOpen] = useState(false);
+  // const [isTourGpsOpen, setIsTourGpsOpen] = useState(false);
   const openTourGps = (row: RecordItem) => {
     setSelectedRow(row);
-    setIsTourGpsOpen(true);
+    // setIsTourGpsOpen(true);
   };
-  const closeTourGps = () => {
-    setIsTourGpsOpen(false);
-    setSelectedRow(null);
-  };
+  // const closeTourGps = () => {
+  //   setIsTourGpsOpen(false);
+  //   setSelectedRow(null);
+  // };
   //---Tour Gps Slider Ends Here-----------------------------
   //---Tour Approval Slider Begin Here-----------------------------
-  const [isTourApprovalOpen, setIsTourApprovalOpen] = useState(false);
+  // const [isTourApprovalOpen, setIsTourApprovalOpen] = useState(false);
   const openTourApproval = (row: RecordItem) => {
     setSelectedRow(row);
-    setIsTourApprovalOpen(true);
+    // setIsTourApprovalOpen(true);
   };
-  const closeTourApproval = () => {
-    setIsTourApprovalOpen(false);
-    setSelectedRow(null);
-  };
+  // const closeTourApproval = () => {
+  //   setIsTourApprovalOpen(false);
+  //   setSelectedRow(null);
+  // };
   //---Tour Approval Slider Ends Here-----------------------------
 
   const handleApproveSelected = async () => {
@@ -145,19 +145,19 @@ export default function MgrTourList() {
     }
   };
   //--------------------------------------------------
-  const handleTourEditClick = (row: RecordItem) => {
-    setEditingRow(row);
-    onOpen();
-  };
+  // const handleTourEditClick = (row: RecordItem) => {
+  //   setEditingRow(row);
+  //   onOpen();
+  // };
   //   const handleTourViewClick = (row: RecordItem) => {
   //   setEditingRow(row);
   //   setIsTourViewOpen(true);
   //   onOpen();
   // };
-  const handleReturnClick = (row: RecordItem) => {
-    setEditingRow(row);
-    onOpen();
-  };
+  // const handleReturnClick = (row: RecordItem) => {
+  //   setEditingRow(row);
+  //   onOpen();
+  // };
 
   
   // Used for Side Drawer End
@@ -274,25 +274,25 @@ export default function MgrTourList() {
         header: 'TourId',
         cell: (info) => JSON.stringify(info.getValue()),
       }),
-      columnHelper.display({
-        id: 'edit',
-        header: 'Edit',
-        cell: (info) => {
-          const rowData = info.row.original;
-          return (
-            <IconButton
-              aria-label="Edit"
-              icon={<FiEdit />}
-              size="sm"
-              variant="ghost"
-              _hover={{bg:"black",textColor:"white"}}
-              onClick={() => {
-                openTourEdit(rowData)
-              }}
-            />
-          );
-        },
-      }),
+      // columnHelper.display({
+      //   id: 'edit',
+      //   header: 'Edit',
+      //   cell: (info) => {
+      //     // const rowData = info.row.original;
+      //     return (
+      //       <IconButton
+      //         aria-label="Edit"
+      //         icon={<FiEdit />}
+      //         size="sm"
+      //         variant="ghost"
+      //         _hover={{bg:"black",textColor:"white"}}
+      //         onClick={() => {
+      //           //openTourEdit(rowData)
+      //         }}
+      //       />
+      //     );
+      //   },
+      // }),
 
       columnHelper.display({
         id: 'view',
@@ -354,26 +354,26 @@ export default function MgrTourList() {
           );
         },
       }),
-      columnHelper.display({
-        id: 'return',
-        header: 'Return',
-        cell: (info) => {
-          const rowData = info.row.original;
-          return (
-            <IconButton
-              color="black"
-              aria-label="RETURN"
-              icon={<FaUndo />}
-              size="sm"
-              variant="ghost"
-              _hover={{bg:"black",textColor:"white"}}
-              onClick={() => {
-                handleReturnClick(rowData)
-              }}
-            />
-          );
-        },
-      }),
+      // columnHelper.display({
+      //   id: 'return',
+      //   header: 'Return',
+      //   cell: (info) => {
+      //     // const rowData = info.row.original;
+      //     return (
+      //       <IconButton
+      //         color="black"
+      //         aria-label="RETURN"
+      //         icon={<FaUndo />}
+      //         size="sm"
+      //         variant="ghost"
+      //         _hover={{bg:"black",textColor:"white"}}
+      //         onClick={() => {
+      //           //handleReturnClick(rowData)
+      //         }}
+      //       />
+      //     );
+      //   },
+      // }),
 
       columnHelper.accessor('userid', {
         header: 'UserId',

@@ -1,16 +1,14 @@
 // src/pages/FilteredTablePage.tsx
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/react';
-import {
-  Select,
-  useDisclosure,
-} from '@chakra-ui/react';
+// import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/react';
+// import {
+//   Select,
+//   useDisclosure,
+// } from '@chakra-ui/react';
 import { useEffect, useMemo, useState } from 'react';
 import {
   Box,
-  Button,
-  HStack,
-  Input,
-  Table,
+    HStack,
+    Table,
   Thead,
   Tbody,
   Tr,
@@ -20,6 +18,9 @@ import {
   IconButton,
   Text,
   Select as ChakraSelect,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
 } from '@chakra-ui/react';
 import {
   createColumnHelper,
@@ -27,12 +28,12 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   useReactTable,
-  type Row,
+  // type Row,
   type SortingState,
 } from '@tanstack/react-table';
 import { FiChevronLeft, FiChevronRight, FiEdit, FiEye } from 'react-icons/fi';
-import { FaCheck, FaCheckDouble, FaFilter, FaLocationDot } from 'react-icons/fa6';
-import { useToast } from '@chakra-ui/react';
+import { FaLocationDot } from 'react-icons/fa6';
+// import { useToast } from '@chakra-ui/react';
 // import { MdOutlineApproval } from 'react-icons/md';
 // import { FcApproval } from 'react-icons/fc';
 // import { RiEjectFill } from 'react-icons/ri';
@@ -46,22 +47,22 @@ type ApiResponse = {
 };
 
 const columnHelper = createColumnHelper<TourMasterType>();
-import ViewGpsSlider from '../components/ViewGpsSlider';
+// import ViewGpsSlider from '../components/ViewGpsSlider';
 import ViewTourDetailsSlider from '../components/ViewTourDetailsSlider';
 import type { TourMasterType } from '../types/TourMasterType';
 
 export default function ToursCompleted() {
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  // const [startDate, setStartDate] = useState('');
+  // const [endDate, setEndDate] = useState('');
   //const [selectedUser, setSelectedUser] = useState('');
 
 
 
   // const toast = useToast();
   // const [rows, setRows] = useState<TourMasterType[]>([]);
-  type UserOption = { userid: string };
-  const [users, setUsers] = useState<UserOption[]>([]);
-  const [username, setUsername] = useState('');
+  // type UserOption = { userid: string };
+  // const [users, setUsers] = useState<UserOption[]>([]);
+  // const [username, setUsername] = useState('');
   // Used for Side Drawer Start
   // const { isOpen, onOpen, onClose } = useDisclosure();
   // const [editingRow, setEditingRow] = useState<TourMasterType | null>(null);
@@ -93,15 +94,15 @@ export default function ToursCompleted() {
   };
   //---Tour View Slider Ends Here-----------------------------
   //---Tour Gps Slider Begin Here-----------------------------
-  const [isTourGpsOpen, setIsTourGpsOpen] = useState(false);
+  // const [isTourGpsOpen, setIsTourGpsOpen] = useState(false);
   const openTourGps = (row:TourMasterType) => {
     setSelectedRow(row);
-    setIsTourGpsOpen(true);
+    // setIsTourGpsOpen(true);
   };
-  const closeTourGps = () => {
-    setIsTourGpsOpen(false);
-    setSelectedRow(null);
-  };
+  // const closeTourGps = () => {
+  //   setIsTourGpsOpen(false);
+  //   setSelectedRow(null);
+  // };
   //---Tour Gps Slider Ends Here-----------------------------
   //---Tour Approval Slider Begin Here-----------------------------
   // const [isTourApprovalOpen, setIsTourApprovalOpen] = useState(false);
@@ -281,6 +282,7 @@ export default function ToursCompleted() {
               _hover={{bg:"black",textColor:"white"}}
               onClick={() => {
                 //openTourEdit(rowData)
+                console.log(rowData);
               }}
             />
           );
@@ -456,18 +458,17 @@ export default function ToursCompleted() {
   const handleFetch = async () => {
     try {
       setIsLoading(true);
-      //console.log('Info:',selectedUser);
-      const res = await fetch('/api/tourbill/tourcompleted', {
-          method: 'POST',
+      const params = new URLSearchParams({ ticket_status: "Tour Completed" });
+      const token = localStorage.getItem('authToken');
+      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+      const res = await fetch(`${apiUrl}/api/touradmin/tours-by-status?${params}`, {
+          method: 'GET',
           credentials: 'include',
           headers: {
-            'Content-Type': 'application/json',
-            //Authorization: `Bearer ${token}`,
+            'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            "start_date":startDate,
-            "end_date":endDate,
-          }),
         });
       if (!res.ok) {
         console.error('Error:', res.status, await res.text());
@@ -487,17 +488,17 @@ export default function ToursCompleted() {
 
   return (
     <>
-    {/* <Breadcrumb fontWeight="thin" fontSize={"sm"} mb={1}>
-      <BreadcrumbItem>
+    <Breadcrumb fontWeight="normal" fontSize={"sm"} mb={1} ml={1} color={"red"}>
+      {/* <BreadcrumbItem>
         <BreadcrumbLink href="/">Home</BreadcrumbLink>
-      </BreadcrumbItem>
+      </BreadcrumbItem> */}
       <BreadcrumbItem>
         <BreadcrumbLink href="/tours">Manager</BreadcrumbLink>
       </BreadcrumbItem>
       <BreadcrumbItem isCurrentPage>
-        <BreadcrumbLink>Bills Pending Approval</BreadcrumbLink>
+        <BreadcrumbLink>Tours Completed</BreadcrumbLink>
       </BreadcrumbItem>
-    </Breadcrumb> */}
+    </Breadcrumb>
     <Box borderWidth="1px" borderRadius="md" maxH="500px" overflow="auto" p={1}>
       {/* Table */}
       <Box overflow="auto">

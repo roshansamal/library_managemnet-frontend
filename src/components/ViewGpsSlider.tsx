@@ -30,7 +30,7 @@ export default function ViewGpsSlider({
   const toast = useToast();
 
   // Local form state
-  const [form, setForm] = useState<number | null>(null);
+  // const [form, setForm] = useState<number | null>(null);
   // const [gps, setGps] = useState<GpsItem | null>(null);
   const [gps, setGps] = useState<GpsItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);

@@ -13,10 +13,10 @@ import {
   Stack,
   useToast,
 } from '@chakra-ui/react';
-import { useCallback } from "react";
+// import { useCallback } from "react";
 import { useEffect, useState } from 'react';
 import type { CustomerType } from '../../types/CustomerType';
-import { PureSelect } from '../utils/PureSelect';
+// import { PureSelect } from '../utils/PureSelect';
 
 export type Option = SelectOption;  // Alias
 import type { SelectOption } from '../../types/SelectOption';
@@ -32,48 +32,86 @@ type AddEmpSliderProps = {
 export default function AddCustomerSlider({
   isOpen,
   onClose,
-  initialData,
+  // initialData,
   onUpdated,
 }: AddEmpSliderProps) {
   const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const fetchDesignations = useCallback(async (): Promise<Option[]> => {
-    const res = await fetch("/api/tourbill/admin/desiglist");
-    const json = await res.json();
-    // assume json = [{ id: 1, name: "India" }, ...]
-    return json.map((c: any) => ({
-      value: String(c.slug),
-      label: c.designation,
-    }));
-  }, []);
+  // const fetchDesignations = useCallback(async (): Promise<Option[]> => {
+  //   const token = localStorage.getItem('authToken');
+  //   const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+  //   const res = await fetch(`${apiUrl}/touradmin/desiglist`, {
+  //     method: 'GET',
+  //     headers: {
+  //       'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+  //       'Accept': 'application/json',
+  //       'Content-Type': 'application/json'
+  //       },
+  //     });
+  //   //--------------------------------
+  //   const json = await res.json();
+  //   // assume json = [{ id: 1, name: "India" }, ...]
+  //   return json.map((c: any) => ({
+  //     value: String(c.slug),
+  //     label: c.designation,
+  //   }));
+  // }, []);
 
-  const fetchDepartments = useCallback(async (): Promise<Option[]> => {
-    const res = await fetch("/api/tourbill/admin/deptlist");
-    const json = await res.json();
-    return json.map((c: any) => ({
-      value: String(c.slug),
-      label: c.department,
-    }));
-  }, []);
+  // const fetchDepartments = useCallback(async (): Promise<Option[]> => {
+  //   const token = localStorage.getItem('authToken');
+  //   const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+  //   const res = await fetch(`${apiUrl}/touradmin/deptlist`, {
+  //     method: 'GET',
+  //     headers: {
+  //       'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+  //       'Accept': 'application/json',
+  //       'Content-Type': 'application/json'
+  //       },
+  //     });
+  //   const json = await res.json();
+  //   return json.map((c: any) => ({
+  //     value: String(c.slug),
+  //     label: c.department,
+  //   }));
+  // }, []);
 
-  const fetchManagers = useCallback(async (): Promise<Option[]> => {
-    const res = await fetch("/api/tourbill/admin/mgrlist");
-    const json = await res.json();
-    return json.map((c: any) => ({
-      value: String(c.userid),
-      label: c.full_name,
-    }));
-  }, []);
+  // const fetchManagers = useCallback(async (): Promise<Option[]> => {
+  //   const token = localStorage.getItem('authToken');
+  //   const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+  //   const res = await fetch(`${apiUrl}/touradmin/mgrlist`, {
+  //     method: 'GET',
+  //     headers: {
+  //       'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+  //       'Accept': 'application/json',
+  //       'Content-Type': 'application/json'
+  //       },
+  //     });
+    
+  //   const json = await res.json();
+  //   return json.map((c: any) => ({
+  //     value: String(c.userid),
+  //     label: c.full_name,
+  //   }));
+  // }, []);
 
-  const fetchBranches = useCallback(async (): Promise<Option[]> => {
-    const res = await fetch("/api/tourbill/admin/branchlist");
-    const json = await res.json();
-    return json.map((c: any) => ({
-      value: String(c.branch_name),
-      label: c.branch_location,
-    }));
-  }, []);
+  // const fetchBranches = useCallback(async (): Promise<Option[]> => {
+  //   const token = localStorage.getItem('authToken');
+  //   const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+  //   const res = await fetch(`${apiUrl}/touradmin/branchlist`, {
+  //     method: 'GET',
+  //     headers: {
+  //       'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+  //       'Accept': 'application/json',
+  //       'Content-Type': 'application/json'
+  //       },
+  //     });
+  //   const json = await res.json();
+  //   return json.map((c: any) => ({
+  //     value: String(c.branch_name),
+  //     label: c.branch_location,
+  //   }));
+  // }, []);
  
 // ✅ Always defined form (no null)
     const [form, setForm] = useState<CustomerType>({ 
@@ -107,13 +145,18 @@ const handleSubmit = async () => {
     if (!form) return;
     try {
       setIsSubmitting(true);
-      const res = await fetch(`/api/tourbill/admin/customer-add`, {
+      const token = localStorage.getItem('authToken');
+      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+      const res = await fetch(`${apiUrl}/touradmin/customer-add`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-        },
+          'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+          },
         body: JSON.stringify(form),
-      });
+        });
+      //-------------------------------------
       if (!res.ok) {
         throw new Error('Failed to update record');
       }

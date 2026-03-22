@@ -1,5 +1,5 @@
 import { Spacer } from '@chakra-ui/react';
-import { useEffect, useMemo, useState } from 'react';
+import {  useMemo, useState } from 'react';
 import {
   Box,
   Button,
@@ -22,15 +22,15 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   useReactTable,
-  type Row,
+  // type Row,
   type SortingState,
 } from '@tanstack/react-table';
-import { FiChevronLeft, FiChevronRight, FiEdit, FiEye } from 'react-icons/fi';
-import { FaCheck, FaLocationDot, FaRecycle } from 'react-icons/fa6';
-import { useToast } from '@chakra-ui/react';
-import type { TourMasterType } from '../../types/TourMasterType';
+import { FiChevronLeft, FiChevronRight, FiEdit,  } from 'react-icons/fi';
+// import { FaCheck, FaLocationDot, FaRecycle } from 'react-icons/fa6';
+// import { useToast } from '@chakra-ui/react';
+// import type { TourMasterType } from '../../types/TourMasterType';
 import { FaSearch } from 'react-icons/fa';
-import TourStatusSlider from '../../components/admin/TourStatusSlider';
+// import TourStatusSlider from '../../components/admin/TourStatusSlider';
 import type { OdometerType } from '../../types/OdometerType';
 import OdometerSlider from '../../components/admin/OdometerSlider';
 type ApiResponse = {
@@ -40,8 +40,8 @@ type ApiResponse = {
 const columnHelper = createColumnHelper<OdometerType>();
 
 export default function ChangeOdometer() {
-  const toast = useToast();
-  const [rows, setRows] = useState<OdometerType[]>([]);
+  // const toast = useToast();
+  // const [rows, setRows] = useState<OdometerType[]>([]);
   const [tourId, setTourId] = useState('');
   const [selectedRow, setSelectedRow] = useState<OdometerType | null>(null);
 
@@ -77,7 +77,7 @@ export default function ChangeOdometer() {
   const [isLoading, setIsLoading] = useState(false);
 
   // ---- Row selector state ----
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  // const [selectedIds, setSelectedIds] = useState<number[]>([]);
    const columns = useMemo(
     () => [
       columnHelper.accessor('id', {
@@ -153,14 +153,17 @@ export default function ChangeOdometer() {
       //console.log(tourId);
       setIsLoading(true);
       setData([]);
-      const res = await fetch(`/api/tourbill/admin/odometer-info/${tourId.toString()}`, {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-            //Authorization: `Bearer ${token}`,
-          },
-        });
+      const token = localStorage.getItem('authToken');
+      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+      const res = await fetch(`${apiUrl}/api/touradmin/odometer-info/${tourId.toString()}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+      });
       if (!res.ok) {
         console.error('Error:', res.status, await res.text());
         return;
@@ -171,7 +174,7 @@ export default function ChangeOdometer() {
       //setData(json ? [json] : []);  // ✅ wrap in array for table
       // setTotal(json.total);
       setTotal(json ? 1 : 0);
-      setSelectedIds([]);          // optional reset
+      // setSelectedIds([]);          // optional reset
     } catch (e) {
       console.error('Fetch failed:', e);
     } finally {

@@ -31,7 +31,7 @@ export default function ViewTourDetailsSlider({
 
   // Local form state
   const [form, setForm] = useState<TourMasterType | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
   //------------------------------------------
   // fetch Tour Details when drawer opens and we have an id
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function ViewTourDetailsSlider({
     const controller = new AbortController();
     const fetchTour = async () => {
       try {
-        setIsLoading(true);
+        // setIsLoading(true);
         const res = await fetch(`/api/tours/${tourId}/dtls`, { signal: controller.signal });
         if (!res.ok) {
           throw new Error(`Failed to load tour: ${res.status}`);
@@ -63,7 +63,7 @@ export default function ViewTourDetailsSlider({
           isClosable: true,
         });
       } finally {
-        setIsLoading(false);
+        // setIsLoading(false);
       }
     };
 

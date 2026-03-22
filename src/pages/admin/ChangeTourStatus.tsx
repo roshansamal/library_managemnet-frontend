@@ -1,5 +1,5 @@
 import { Spacer } from '@chakra-ui/react';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Box,
   Button,
@@ -22,12 +22,12 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   useReactTable,
-  type Row,
+  // type Row,
   type SortingState,
 } from '@tanstack/react-table';
-import { FiChevronLeft, FiChevronRight, FiEdit, FiEye } from 'react-icons/fi';
-import { FaCheck, FaLocationDot, FaRecycle } from 'react-icons/fa6';
-import { useToast } from '@chakra-ui/react';
+import { FiChevronLeft, FiChevronRight, FiEdit,  } from 'react-icons/fi';
+// import { FaCheck, FaLocationDot, FaRecycle } from 'react-icons/fa6';
+// import { useToast } from '@chakra-ui/react';
 import type { TourMasterType } from '../../types/TourMasterType';
 import { FaSearch } from 'react-icons/fa';
 import TourStatusSlider from '../../components/admin/TourStatusSlider';
@@ -42,21 +42,21 @@ type ApiResponse = {
 const columnHelper = createColumnHelper<TourMasterType>();
 
 export default function ChangeTourStatus() {
-  const toast = useToast();
-  const [rows, setRows] = useState<TourMasterType[]>([]);
-  type UserOption = { userid: string };
-  const [users, setUsers] = useState<UserOption[]>([]);
-  const [username, setUsername] = useState('');
+  // const toast = useToast();
+  // const [rows, setRows] = useState<TourMasterType[]>([]);
+  // type UserOption = { userid: string };
+  // const [users, setUsers] = useState<UserOption[]>([]);
+  // const [username, setUsername] = useState('');
   const [tourId, setTourId] = useState('');
-  const [editingRow, setEditingRow] = useState<TourMasterType | null>(null);
+  // const [editingRow, setEditingRow] = useState<TourMasterType | null>(null);
   const [selectedRow, setSelectedRow] = useState<TourMasterType | null>(null);
+  const token = localStorage.getItem('authToken');
 
   function fetchDataAgain(): void {
     handleFetch();
   }
   //---Tour View Slider Begin Here-----------------------------
   const [isTourStatusOpen, setIsTourStatusOpen] = useState(false);
-
   const openTourStatus = (row: TourMasterType) => {
     setSelectedRow(row);
     setIsTourStatusOpen(true);
@@ -86,7 +86,7 @@ export default function ChangeTourStatus() {
   const [isLoading, setIsLoading] = useState(false);
 
   // ---- Row selector state ----
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  // const [setSelectedIds] = useState<number[]>([]);
    const columns = useMemo(
     () => [
       columnHelper.accessor('id', {
@@ -242,14 +242,24 @@ export default function ChangeTourStatus() {
     try {
       //console.log(tourId);
       setIsLoading(true);
-      const res = await fetch(`/api/tourbill/admin/tourinfo/${tourId.toString()}`, {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-            //Authorization: `Bearer ${token}`,
-          },
-        });
+
+      // const res = await fetch(`/api/tourbill/admin/tourinfo/${tourId.toString()}`, {
+      //     method: 'GET',
+      //     credentials: 'include',
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //       //Authorization: `Bearer ${token}`,
+      //     },
+      //   });
+      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+      const res = await fetch(`${apiUrl}/api/touradmin/tourinfo/${tourId.toString()}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+          'Accept': 'application/json',
+        },
+      });
+      
       if (!res.ok) {
         console.error('Error:', res.status, await res.text());
         return;
@@ -260,7 +270,7 @@ export default function ChangeTourStatus() {
       //setData(json ? [json] : []);  // ✅ wrap in array for table
       // setTotal(json.total);
       setTotal(json ? 1 : 0);
-      setSelectedIds([]);          // optional reset
+      // setSelectedIds([]);          // optional reset
     } catch (e) {
       console.error('Fetch failed:', e);
     } finally {
@@ -278,6 +288,7 @@ export default function ChangeTourStatus() {
       </HStack>
       <HStack spacing={1} as="nav" aria-label="Breadcrumb">
         <Input
+          textAlign={'center'}
           type='number'
           p={1} h={8}
           width={"20"}
