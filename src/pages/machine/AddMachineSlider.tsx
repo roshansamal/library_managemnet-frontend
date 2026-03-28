@@ -16,26 +16,28 @@ import {
 import { useCallback } from "react";
 import { useEffect, useState } from 'react';
 import type { EmployeeType } from '../../types/EmployeeType';
-import { PureSelect } from '../utils/PureSelect';
+// import { PureSelect } from '../utils/PureSelect';
 
 export type Option = SelectOption;  // Alias
 import type { SelectOption } from '../../types/SelectOption';
+import type { MachineMasterType } from '../../types/MachineMasterType';
+import { PureSelect } from '../../components/utils/PureSelect';
 // import type { MachineMasterType } from '../../types/MachineMasterType';
 
-type AddEmpSliderProps = {
+type AddMachineSliderProps = {
   isOpen: boolean;
   onClose: () => void;
-  initialData: EmployeeType | null;
+  initialData: MachineMasterType | null;
   onUpdated?: () => void; // callback to refresh table after success
 };
 
 // Main Function Start Here
-export default function AddEmpSlider({
+export default function AddMachineSlider({
   isOpen,
   onClose,
-  // initialData,
+  //initialData,
   onUpdated,
-}: AddEmpSliderProps) {
+}: AddMachineSliderProps) {
   const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

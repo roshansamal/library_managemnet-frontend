@@ -33,8 +33,9 @@ import {
   type SortingState,
 } from '@tanstack/react-table';
 import { FiChevronLeft, FiChevronRight,  } from 'react-icons/fi';
-import { FaDownload, } from 'react-icons/fa6';
+import { FaDownload, FaTrash, } from 'react-icons/fa6';
 import type { PfrUploadsType } from '../../types/PfrUploadsType';
+import { ConfirmDeleteDialog } from '../../components/utils/ConfirmDeleteDialog';
 // import { useToast } from '@chakra-ui/react';
 // import { MdOutlineApproval } from 'react-icons/md';
 // import { FcApproval } from 'react-icons/fc';
@@ -189,12 +190,14 @@ export default function PfrUploaded() {
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [data, setData] = useState<PfrUploadsType[]>([]);
-  const [pageIndex, setPageIndex] = useState(0); // zero-based
-  const [pageSize, setPageSize] = useState(10);
+  // const [pageIndex, setPageIndex] = useState(0); // zero-based
+  // const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   // ---- Row selector state ----
+  const [rowToDelete, setRowToDelete] = useState<PfrUploadsType | null>(null);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const allSelected = data.length > 0 && selectedIds.length === data.length;
   const isSelected = (tourid: number) => selectedIds.includes(tourid);
@@ -207,6 +210,11 @@ export default function PfrUploaded() {
       prev.includes(tourid) ? prev.filter((x) => x !== tourid) : [...prev, tourid],
     );
   };
+
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
   // ----------------------------
   // const reloadTours = async () => {
   //   try {
@@ -241,36 +249,112 @@ export default function PfrUploaded() {
   //   };
   //   fetchUsers();
   // }, []);
+
+
+  const handleDeleteConfirm = async () => {
+    if (!rowToDelete) return;
+    try {
+      const token = localStorage.getItem('authToken');
+      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+      const res = await fetch(
+        `${apiUrl}/touradmin/delete-pfr`,
+        {
+          method: 'PATCH',
+          credentials: 'include',
+          headers: {
+          'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({'pfr_id':rowToDelete.id}),
+        },
+      );
+
+      if (!res.ok) {
+        throw new Error(`Delete failed: ${res.status}`);
+      }
+
+      await handleFetch();
+      toast({
+        title: 'Deleted',
+        description: `PFR ${rowToDelete.id} marked as deleted`,
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (e: any) {
+      toast({
+        title: 'Delete failed',
+        description: e?.message ?? 'Something went wrong',
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+      });
+    } finally {
+      setRowToDelete(null);
+    }
+  };
+
+
   useEffect(() => {
     handleFetch();
-  }, []);
+  }, [pagination.pageIndex, pagination.pageSize, sorting]);
   
   const columns = useMemo(
     () => [
       columnHelper.display({
-        id: 'select',
-        header: () => (
-          <input
-            type="checkbox"
-            checked={allSelected}
-            onChange={toggleAll}
-          />
-        ),
-        cell: ({ row }) => {
-          const rowId = row.original.id;
-          return (
-            <input
-              type="checkbox"
-              checked={isSelected(rowId)}
-              onChange={() => toggleOne(rowId)}
-            />
-          );
+        id: 'serial_no',
+        header: 'SL',
+        cell: ({ row, table }) => {
+          const { pageIndex, pageSize } = table.getState().pagination;
+          return pageIndex * pageSize + row.index + 1;
         },
       }),
+      // columnHelper.display({
+      //   id: 'select',
+      //   header: () => (
+      //     <input
+      //       type="checkbox"
+      //       checked={allSelected}
+      //       onChange={toggleAll}
+      //     />
+      //   ),
+      //   cell: ({ row }) => {
+      //     const rowId = row.original.id;
+      //     return (
+      //       <input
+      //         type="checkbox"
+      //         checked={isSelected(rowId)}
+      //         onChange={() => toggleOne(rowId)}
+      //       />
+      //     );
+      //   },
+      // }),
       columnHelper.accessor('id', {
         header: 'ID',
         cell: (info) => JSON.stringify(info.getValue()),
       }),
+      columnHelper.display({
+              id: 'delete',
+              header: 'Delete',
+              cell: (info) => {
+                const rowData = info.row.original as PfrUploadsType;
+                return (
+                  <IconButton
+                    aria-label="Delete"
+                    icon={<FaTrash />}
+                    color="red"
+                    size="sm"
+                    variant="ghost"
+                    _hover={{ bg: 'black', textColor: 'white' }}
+                    onClick={() => {
+                      setRowToDelete(rowData);
+                      setIsDeleteOpen(true);
+                    }}
+                  />
+                );
+              },
+            }),
        columnHelper.accessor('upload_date', {
         header: 'Upload Date',
         cell: (info) => info.getValue(),
@@ -318,32 +402,43 @@ export default function PfrUploaded() {
     data,
     columns,
     state: {
-      sorting,
+      pagination,sorting,
     },
+    onPaginationChange: setPagination,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     manualSorting: true,
     manualPagination: true,
-    pageCount: Math.ceil(total / pageSize) || -1,
+    // pageCount: Math.ceil(total / pageSize) || -1,
+    pageCount: total ? Math.ceil(total / pagination.pageSize) : -1,
   });
 
-  const pageCount = Math.max(Math.ceil(total / pageSize), 1);
-  const canPrev = pageIndex > 0;
-  const canNext = pageIndex < pageCount - 1;
+  // const pageCount = Math.max(Math.ceil(total / pageSize), 1);
+  // const canPrev = pageIndex > 0;
+  // const canNext = pageIndex < pageCount - 1;
+
+  const { pageIndex, pageSize } = table.getState().pagination;
+  const canPrev = table.getCanPreviousPage();
+  const canNext = table.getCanNextPage();
 
   const handleFetch = async () => {
     try {
       setIsLoading(true);
+      const params = new URLSearchParams({
+        page: (pagination.pageIndex + 1).toString(),
+        per_page: pagination.pageSize.toString(),
+      });
       //console.log('Info:',selectedUser);
       const token = localStorage.getItem('authToken');
       const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
-      const res = await fetch(`${apiUrl}/api/pfr/pfrlist`, {
+      const res = await fetch(`${apiUrl}/api/pfr/pfrlist?${params}`, {
           method: 'GET',
           credentials: 'include',
           headers: {
-            'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
           },
           // body: JSON.stringify({
           //   "start_date":startDate,
@@ -489,7 +584,8 @@ export default function PfrUploaded() {
                       aria-label="Previous page"
                       icon={<FiChevronLeft />}
                       size="sm"
-                      onClick={() => canPrev && setPageIndex((p) => p - 1)}
+                      //onClick={() => canPrev && setPageIndex((p) => p - 1)}
+                      onClick={() => table.previousPage()}
                       isDisabled={!canPrev}
                       bg={"black"}
                       color={"white"}
@@ -499,13 +595,15 @@ export default function PfrUploaded() {
                       aria-label="Next page"
                       icon={<FiChevronRight />}
                       size="sm"
-                      onClick={() => canNext && setPageIndex((p) => p + 1)}
+                      //onClick={() => canNext && setPageIndex((p) => p + 1)}
+                      onClick={() => table.nextPage()}
                       isDisabled={!canNext}
                       bg={"black"}
                       color={"white"}
                     />
                     <Text fontSize="sm">
-                      Page {pageIndex + 1} of {pageCount}
+                      {/* Page {pageIndex + 1} of {pageCount} */}
+                      Page {pageIndex + 1} of {table.getPageCount() || 1}
                     </Text>
                   </HStack>
                   <HStack>
@@ -515,12 +613,16 @@ export default function PfrUploaded() {
                       width="80px"
                       value={pageSize}
                       onChange={(e) => {
-                        setPageSize(Number(e.target.value));
-                        setPageIndex(0);
+                        // setPageSize(Number(e.target.value));
+                        // setPageIndex(0);
+
+                        const newSize = Number(e.target.value);
+                        table.setPageSize(newSize);
+                        table.setPageIndex(0);
                       }}
                     >
                       {/* {[10, 20, 50].map((size) => ( */}
-                       {[5, 10, 25].map((size) => (
+                       {[10,50,100].map((size) => (
                         <option key={size} value={size}>
                           {size}
                         </option>
@@ -564,7 +666,16 @@ export default function PfrUploaded() {
       initialData={selectedRow}
       onUpdated={fetchDataAgain}
     />; */}
+    <ConfirmDeleteDialog
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        onConfirm={handleDeleteConfirm}
+      />
     </Box>
     </>
   );
 }
+function toast(_arg0: { title: string; description: any; status: string; duration: number; isClosable: boolean; }) {
+  throw new Error('Function not implemented.');
+}
+

@@ -31,6 +31,10 @@ import ChangeTourStatus from './pages/admin/ChangeTourStatus';
 import ChangeOdometer from './pages/admin/ChangeOdometer';
 import PfrUploaded from './pages/pfr/pfr_uploaded';
 import ChangeTiming from './pages/admin/ChangeTiming';
+import MachineMaster from './pages/machine/MachineMaster';
+import HmrUpdate from './pages/machine/HmrUpdate';
+import HmrHistory from './pages/machine/HmrHistory';
+import ServicingList from './pages/machine/ServicingList';
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -72,7 +76,7 @@ export default function App() {
         {/* layout route: sidebar + topbar */}
         {/* <Route path="/" element={<DashboardLayout onLogout={() => { } } children={undefined} />}> */}
         <Route path="/" element={<DashboardLayout onLogout={handleLogout} children={undefined} />}>
-        <Route path="dashboard" element={<DashboardHome />} />
+        <Route path="/dashboard" element={<DashboardHome />} />
         {/* Admin Section */}
         <Route path="admin/employees" element={<Employees />} />
         <Route path="admin/customers" element={<Customers />} />
@@ -119,6 +123,13 @@ export default function App() {
         <Route path="revenue/addbill" element={<RevenueAddBill />} />
         {/* <Route path="reports/sales" element={<ReportsSalesPage />} /> */}
         {/* add other pages matching your sidebarConfig paths */}
+
+        {/* Machine Section */}
+        <Route path="machine/machine-list" element={<MachineMaster />} />
+        <Route path="machine/hmrupdate" element={<HmrUpdate />} />
+        <Route path="machine/hmrhistory" element={<HmrHistory />} />
+        <Route path="machine/servicing-list" element={<ServicingList />} />
+
       </Route>
     </Routes>
   );
