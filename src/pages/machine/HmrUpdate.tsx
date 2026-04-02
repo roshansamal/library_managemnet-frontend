@@ -332,7 +332,7 @@ import {
   Tbody,
   Td,
   Toast,
-  VStack,
+  // VStack,
   Input,
   SimpleGrid,
 } from "@chakra-ui/react";
@@ -351,10 +351,10 @@ type ApiSerialResponse = {
   //count: number;
   data: ApiSerial[];
 };
-type SerialItem = {
-  id: number;
-  machine_serial: string;
-};
+// type SerialItem = {
+//   id: number;
+//   machine_serial: string;
+// };
 
 type ApiListResponse = {
   success: boolean;
@@ -380,7 +380,7 @@ export default function HmrUpdate() {
   const [isLoadingSerials, setIsLoadingSerials] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hmrData, setHmrData] = useState<any[]>([]);
-  const [hmrId, setHmrId] = useState<number | null>(null);
+  // const [hmrId, setHmrId] = useState<number | null>(null);
   
 
   type HmrRow = {
@@ -400,7 +400,7 @@ export default function HmrUpdate() {
   };
   const [serials, setSerials] = useState<SerialItem[]>([]);
   const [serialNo, setSerialNo] = useState("");
-  const [machineId, setMachineId] = useState("");
+  // const [machineId, setMachineId] = useState("");
 
   const direction = useBreakpointValue<"column" | "row">({
     base: "column",
@@ -414,7 +414,7 @@ export default function HmrUpdate() {
     setBrandName(value);
     setModelName("");
     setSerialNo("");
-    setMachineId("");
+    // setMachineId("");
     setModels([]);
     setSerials([]);
 
@@ -452,7 +452,7 @@ export default function HmrUpdate() {
   const handleModelChange = async (value: string) => {
     setModelName(value);
     setSerialNo("");
-    setMachineId("");
+    // setMachineId("");
     setSerials([]);
 
     if (!brandName || !value) return;
@@ -727,7 +727,7 @@ function HmrForm({ selectedId }: HmrFormProps) {
 const handleSerialChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
   const value = e.target.value;
   setSerialNo(value);
-  setMachineId(value);
+  // setMachineId(value);
   console.log(`Value Selected: ${value}`);
   //setHmrId(null);
 };

@@ -85,12 +85,12 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
       // await fetch(`${apiUrl}/sanctum/csrf-cookie`,{
       //   credentials: 'include',
       // });
-       //const response = await fetch(`${apiUrl}/login`,
-       const response = await fetch(joinUrl(apiUrl, '/api/login'),
+       const response = await fetch(`${apiUrl}/api/login`,
+       //const response = await fetch(joinUrl(apiUrl, '/api/login'),
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          credentials: 'include',  // if using Sanctum cookies
+          //credentials: 'include',  // if using Sanctum cookies
           body: JSON.stringify(formData),
         }
       );

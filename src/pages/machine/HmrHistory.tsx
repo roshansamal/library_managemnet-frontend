@@ -14,9 +14,9 @@ import {
   Th,
   Tbody,
   Td,
-  Toast,
-  Input,
-  SimpleGrid,
+  // Toast,
+  // Input,
+  // SimpleGrid,
 } from "@chakra-ui/react";
 import React from "react";
 import { useState } from "react";
@@ -80,7 +80,7 @@ export default function HmrHistory() {
   };
   const [serials, setSerials] = useState<SerialItem[]>([]);
   const [serialNo, setSerialNo] = useState("");
-  const [machineId, setMachineId] = useState("");
+  // const [machineId, setMachineId] = useState("");
 
   const direction = useBreakpointValue<"column" | "row">({
     base: "column",
@@ -94,7 +94,7 @@ export default function HmrHistory() {
     setBrandName(value);
     setModelName("");
     setSerialNo("");
-    setMachineId("");
+    // setMachineId("");
     setModels([]);
     setSerials([]);
 
@@ -132,7 +132,7 @@ export default function HmrHistory() {
   const handleModelChange = async (value: string) => {
     setModelName(value);
     setSerialNo("");
-    setMachineId("");
+    // setMachineId("");
     setSerials([]);
 
     if (!brandName || !value) return;
@@ -258,7 +258,7 @@ function MyTable({ data }: { data: HmrRow[] }) {
 const handleSerialChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
   const value = e.target.value;
   setSerialNo(value);
-  setMachineId(value);
+  // setMachineId(value);
   //console.log(`Value Selected: ${value}`);
 };
 

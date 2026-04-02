@@ -29,8 +29,9 @@ export const nestedMenu = [
       { label: 'Customers', path: '/admin/customers' },
       { label: 'Change Tour Status', path: '/admin/change-tour-status' },
       { label: 'Change Odometer', path: '/admin/change-odometer' },
-      { label: 'Change Timing', path: '/admin/change-timing' },
+      { label: 'Tour Timings', path: '/admin/change-timing' },
       { label: 'Email Update', path: '/admin/emailupdate' },
+      { label: 'Callback Request', path: '/admin/callbacks' },
     ],
   },
   {
@@ -111,7 +112,7 @@ export const nestedMenu = [
     label: 'Machine',
     icon: BiBus,
     children: [
-      { label: 'Add Customer Master', path: '/users' },
+      { label: 'Customer Master', path: '/admin/customers' },
       { label: 'Add Machine Master', path: '/users/admins' },
       { label: 'View Coverage', path: '/users/customers' },
       { label: 'Machine List (Edit)', path: 'machine/machine-list' },
@@ -141,7 +142,7 @@ export const nestedMenu = [
     label: 'Customer',
     icon: FiUsers,
     children: [
-      { label: 'Add Customer Master', path: '/users' },
+      { label: 'Customer Master', path: '/users' },
       { label: 'Add Machine Master', path: '/users/admins' },
       { label: 'View Coverage', path: '/users/customers' },
       { label: 'View Machine List(Edit)', path: '/users/customers' },

@@ -35,6 +35,7 @@ import MachineMaster from './pages/machine/MachineMaster';
 import HmrUpdate from './pages/machine/HmrUpdate';
 import HmrHistory from './pages/machine/HmrHistory';
 import ServicingList from './pages/machine/ServicingList';
+import CallbackRequest from './pages/admin/CallbackRequest';
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -84,6 +85,8 @@ export default function App() {
         <Route path="/admin/change-timing" element={<ChangeTiming />} />
         <Route path="/admin/change-tour-status" element={<ChangeTourStatus />} />
         <Route path="/admin/change-odometer" element={<ChangeOdometer />} />
+        <Route path="/admin/callbacks" element={<CallbackRequest />} />
+        
 
         {/* PFR Section */}
         <Route path="pfr/list" element={<PfrUploaded />} />

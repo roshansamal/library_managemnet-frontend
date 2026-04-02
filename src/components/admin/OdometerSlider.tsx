@@ -139,7 +139,7 @@ export default function OdometerSlider({
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
-        <DrawerHeader color="blue" fontSize={"md"}>Tour Status Update</DrawerHeader>
+        <DrawerHeader color="blue" fontSize={"md"}>Odometer  Update</DrawerHeader>
         <DrawerBody>
           <Stack spacing={4}>
             <FormControl>

@@ -295,6 +295,7 @@ export default function ChangeTourStatus() {
           value={tourId}
           onChange={(e) => setTourId(e.target.value)}
           bg={"orange.100"}
+          //onKeyDown={handleFetch}
         />
       <Button colorScheme="blue" onClick={handleFetch} h={8} fontSize={"sm"} mx={"2"}>
         <FaSearch /><Spacer width={2}/>Search Tour
@@ -358,6 +359,7 @@ export default function ChangeTourStatus() {
                     {flexRender(
                       cell.column.columnDef.cell,
                       cell.getContext(),
+                      
                     )}
                   </Td>
                 ))}

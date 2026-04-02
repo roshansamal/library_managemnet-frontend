@@ -34,51 +34,32 @@ export default function TourStatusSlider({
 }: EmpEditSliderProps) {
  const toast = useToast();
  const [isSubmitting, setIsSubmitting] = useState(false);
+ const [newTourStatus, setNewTourStatus] = useState('');
  const [dynamicStatusOptions, setDynamicStatusOptions] = useState<SelectOption[]>([]);
-
+ type TourStatusType = {
+  id: number;
+  ticket_status:string;
+  new_ticket_status:string;
+};
   // ✅ Always defined form (no null)
-    const [form, setForm] = useState<TourMasterType>({ 
+    const [form, setForm] = useState<TourStatusType & { new_ticket_status: string }>({ 
       id: 0,
-      userid: '',
-      created_on: '',
-      submitted_on: '',
-      updated_on: '',
-      customer_name: '',
-      purpose_of_visit: '',
-      machine_model: '',
-      machine_serial: '',
-      complaint_dtls: '',
-      service_type: '',
-      travel_from: '',
-      travel_to: '',
-      mode_of_travel:'',
       ticket_status:'',
-      cancel_reason:'',
-      visiting_role:'',
-      team_members:'',
-      prim_tourid:'',
-      tour_start_date:'',
-      tour_end_date:'',
-      tour_continue:'',
-      tour_continue_date:'',
-      mgr_remarks:'',
-      auto_close:'',
-      approved_by:'',
-      approved_at:'',
+      new_ticket_status:'',
     });
 
   const fetchStatus = useCallback(async (): Promise<SelectOption[]> => {
     try {
       const token = localStorage.getItem('authToken');
-      // const res = await fetch("/api/touradmin/tourstatus");
       const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
-      const res = await fetch(`${apiUrl}/touradmin/tourstatus`, {
+      const res = await fetch(`${apiUrl}/api/touradmin/tourstatus`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,   // 👈 Bearer token
           'Accept': 'application/json',
         },
       });
+      console.log(res.body);
       //-----------------------------------
       if (!res.ok) throw new Error('Failed to fetch');
       const json = await res.json();
@@ -105,54 +86,42 @@ export default function TourStatusSlider({
     fetchStatus().then(setDynamicStatusOptions);
     // Populate form from initialData
     if (initialData) {
-      setForm(initialData);
+      // setForm(initialData);
+      setForm({
+        ...initialData,
+        new_ticket_status: initialData.ticket_status || '',
+      });
     } else {
         setForm({
           id: 0,
-          userid: '',
-          created_on: '',
-          submitted_on: '',
-          updated_on: '',
-          customer_name: '',
-          purpose_of_visit: '',
-          machine_model: '',
-          machine_serial: '',
-          complaint_dtls: '',
-          service_type: '',
-          travel_from: '',
-          travel_to: '',
-          mode_of_travel:'',
           ticket_status:'',
-          cancel_reason:'',
-          visiting_role:'',
-          team_members:'',
-          prim_tourid:'',
-          tour_start_date:'',
-          tour_end_date:'',
-          tour_continue:'',
-          tour_continue_date:'',
-          mgr_remarks:'',
-          auto_close:'',
-          approved_by:'',
-          approved_at:'',
+          new_ticket_status:'',
         });
       }
-    }, [initialData]);
+    }, [initialData,fetchStatus]);
 
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
-      console.log(JSON.stringify(form));
+      // console.log(JSON.stringify({
+      //     'id':form.id,
+      //     'new_ticket_status':newTourStatus,
+      //   }));
       
       const token = localStorage.getItem('authToken');
       const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
-      const res = await fetch(`${apiUrl}/touradmin/tour-status-update`, {
-        method: 'GET',
+      const res = await fetch(`${apiUrl}/api/touradmin/tour-status-update`, {
+        method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,   // 👈 Bearer token
           'Accept': 'application/json',
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          'id':form.id,
+          'new_ticket_status':newTourStatus,
+        })
+        //body: JSON.stringify({...form})
       });
 
       if (!res.ok) {
@@ -207,9 +176,11 @@ export default function TourStatusSlider({
               </FormControl>
               <PureSelect
                 label="New Tour Status"
-                value={form.ticket_status}
+                //value={form.new_ticket_status}
+                value={newTourStatus}
                 options={dynamicStatusOptions}
-                onChange={(value) => handleChange('ticket_status', value)}
+                //onChange={(value) => handleChange('ticket_status', value)}
+                onChange={(value) => setNewTourStatus(value)}
                 placeholder="Select Tour Status"
               />
           </Stack>

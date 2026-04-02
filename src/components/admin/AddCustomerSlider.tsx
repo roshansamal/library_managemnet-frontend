@@ -10,11 +10,12 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Select,
   Stack,
   useToast,
 } from '@chakra-ui/react';
 // import { useCallback } from "react";
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { CustomerType } from '../../types/CustomerType';
 // import { PureSelect } from '../utils/PureSelect';
 
@@ -37,83 +38,55 @@ export default function AddCustomerSlider({
 }: AddEmpSliderProps) {
   const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [serials, setSerials] = useState<SerialItem[]>([]);
+  // const [serialNo, setSerialNo] = useState("");
 
-  // const fetchDesignations = useCallback(async (): Promise<Option[]> => {
-  //   const token = localStorage.getItem('authToken');
-  //   const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
-  //   const res = await fetch(`${apiUrl}/touradmin/desiglist`, {
-  //     method: 'GET',
-  //     headers: {
-  //       'Authorization': `Bearer ${token}`,   // 👈 Bearer token
-  //       'Accept': 'application/json',
-  //       'Content-Type': 'application/json'
-  //       },
-  //     });
-  //   //--------------------------------
-  //   const json = await res.json();
-  //   // assume json = [{ id: 1, name: "India" }, ...]
-  //   return json.map((c: any) => ({
-  //     value: String(c.slug),
-  //     label: c.designation,
-  //   }));
-  // }, []);
+   type SerialItem = {
+    id: string | number;
+    company_name: string;
+  };
 
-  // const fetchDepartments = useCallback(async (): Promise<Option[]> => {
-  //   const token = localStorage.getItem('authToken');
-  //   const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
-  //   const res = await fetch(`${apiUrl}/touradmin/deptlist`, {
-  //     method: 'GET',
-  //     headers: {
-  //       'Authorization': `Bearer ${token}`,   // 👈 Bearer token
-  //       'Accept': 'application/json',
-  //       'Content-Type': 'application/json'
-  //       },
-  //     });
-  //   const json = await res.json();
-  //   return json.map((c: any) => ({
-  //     value: String(c.slug),
-  //     label: c.department,
-  //   }));
-  // }, []);
+  // type ApiItem = {
+  //   company_name: string; // used for both models and serials (per your API)
+  // };
+  type ApiSerial = {
+    id: number;
+    company_name: string; // used for both models and serials (per your API)
+  };
+  type ApiSerialResponse = {
+    //success: boolean;
+    //count: number;
+    data: ApiSerial[];
+  };
+  // type ApiListResponse = {
+  //   success: boolean;
+  //   count: number;
+  //   data: ApiItem[];
+  // };
 
-  // const fetchManagers = useCallback(async (): Promise<Option[]> => {
-  //   const token = localStorage.getItem('authToken');
-  //   const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
-  //   const res = await fetch(`${apiUrl}/touradmin/mgrlist`, {
-  //     method: 'GET',
-  //     headers: {
-  //       'Authorization': `Bearer ${token}`,   // 👈 Bearer token
-  //       'Accept': 'application/json',
-  //       'Content-Type': 'application/json'
-  //       },
-  //     });
-    
-  //   const json = await res.json();
-  //   return json.map((c: any) => ({
-  //     value: String(c.userid),
-  //     label: c.full_name,
-  //   }));
-  // }, []);
+  
+  const fetchPrincipalCompany = useCallback(async (): Promise<void> => {
+    const token = localStorage.getItem('authToken');
+    const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
+    const res = await fetch(`${apiUrl}/api/touradmin/principal-companies`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,   // 👈 Bearer token
+        'Accept': 'application/json',
+      },
+    });
 
-  // const fetchBranches = useCallback(async (): Promise<Option[]> => {
-  //   const token = localStorage.getItem('authToken');
-  //   const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
-  //   const res = await fetch(`${apiUrl}/touradmin/branchlist`, {
-  //     method: 'GET',
-  //     headers: {
-  //       'Authorization': `Bearer ${token}`,   // 👈 Bearer token
-  //       'Accept': 'application/json',
-  //       'Content-Type': 'application/json'
-  //       },
-  //     });
-  //   const json = await res.json();
-  //   return json.map((c: any) => ({
-  //     value: String(c.branch_name),
-  //     label: c.branch_location,
-  //   }));
-  // }, []);
+    const json: ApiSerialResponse = await res.json();
+    console.log(json);
+    setSerials(
+      json.data.map((item) => ({
+        id: item.id,
+        company_name: item.company_name,
+      }))
+    );
+  }, []);
  
-// ✅ Always defined form (no null)
+  // ✅ Always defined form (no null)
     const [form, setForm] = useState<CustomerType>({ 
       id: 0,
       name: '',
@@ -139,15 +112,17 @@ const handleChange = (key: keyof CustomerType, value: string) => {
 // Fetch and Set Dynamic Data From API
 
 useEffect(() => {
-}, []);
+  fetchPrincipalCompany();
+}, [fetchPrincipalCompany]);
 
 const handleSubmit = async () => {
     if (!form) return;
     try {
       setIsSubmitting(true);
+      console.log(JSON.stringify(form));
       const token = localStorage.getItem('authToken');
       const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
-      const res = await fetch(`${apiUrl}/touradmin/customer-add`, {
+      const res = await fetch(`${apiUrl}/api/touradmin/customer-add`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,   // 👈 Bearer token
@@ -156,6 +131,7 @@ const handleSubmit = async () => {
           },
         body: JSON.stringify(form),
         });
+        console.log(res.json.toString);
       //-------------------------------------
       if (!res.ok) {
         throw new Error('Failed to update record');
@@ -192,7 +168,7 @@ const handleSubmit = async () => {
         <DrawerBody>
           <Stack spacing={4}>
             <FormControl>
-                <FormLabel fontWeight={"semibold"} fontSize={"sm"}>Name:</FormLabel>
+                <FormLabel fontWeight={"semibold"} fontSize={"sm"}>Customer Name:</FormLabel>
                 <Input
                   type="string"
                   value={form.name?.toString() || ''}
@@ -209,69 +185,20 @@ const handleSubmit = async () => {
               />
             </FormControl>
             <FormControl>
-              <FormLabel fontWeight="semibold" fontSize="sm">Primary Location</FormLabel>
-              <Input
-                value={form.prim_location}
-                onChange={(e) => handleChange('prim_location', e.target.value)}
-                bg="blue.50"
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel fontWeight="semibold" fontSize="sm">Contact Person</FormLabel>
-              <Input
-                value={form.contact_person}
-                onChange={(e) => handleChange('contact_person', e.target.value)}
-                bg="blue.50"
-              />
-            </FormControl>
-            
-              <FormControl>
-                <FormLabel fontWeight={"semibold"} fontSize={"sm"}>Contact Person No:</FormLabel>
-                <Input
-                  value={form.contact_person_no || ''}
-                  onChange={(e) => handleChange('contact_person_no', e.target.value)}
-                  bg={"blue.50"}
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel fontWeight={"semibold"} fontSize={"sm"}>Primary Contact No:</FormLabel>
-                <Input
-                  value={form.prim_contact_no || ''}
-                  onChange={(e) => handleChange('prim_contact_no', e.target.value)}
-                  bg={"blue.50"}
-                />
-              </FormControl>
-            <FormControl>
-              <FormLabel fontWeight={"semibold"} fontSize={"sm"}>Alternate Contact No:</FormLabel>
-                <Input
-                  value={form.alt_contact_no || ''}
-                  onChange={(e) => handleChange('alt_contact_no', e.target.value)}
-                  bg={"blue.50"}
-                />
-            </FormControl>
-            <FormControl>
-              <FormLabel fontWeight={"semibold"} fontSize={"sm"}>WhatsApp No:</FormLabel>
-                <Input
-                  value={form.whatsapp_mobileno || ''}
-                  onChange={(e) => handleChange('whatsapp_mobileno', e.target.value)}
-                  bg={"blue.50"}
-                />
-            </FormControl>
-            <FormControl>
-              <FormLabel fontWeight={"semibold"} fontSize={"sm"}>Customer Status:</FormLabel>
-                <Input
-                  value={form.customer_status || ''}
-                  onChange={(e) => handleChange('customer_status', e.target.value)}
-                  bg={"blue.50"}
-                />
-            </FormControl>
-            <FormControl>
               <FormLabel fontWeight={"semibold"} fontSize={"sm"}>Principal Company:</FormLabel>
-                <Input
-                  value={form.principal_company || ''}
+                <Select
+                  placeholder="Select principal company"
+                  value={form.principal_company}
                   onChange={(e) => handleChange('principal_company', e.target.value)}
-                  bg={"blue.50"}
-                />
+                  size="sm"
+                  bgColor="white"
+                >
+                  {serials.map((item) => (
+                    <option key={item.id} value={item.company_name}>
+                      {item.company_name}
+                    </option>
+                  ))}
+                </Select>
             </FormControl>
             <FormControl>
               <FormLabel fontWeight={"semibold"} fontSize={"sm"}>Address Line 1:</FormLabel>
@@ -290,17 +217,92 @@ const handleSubmit = async () => {
                 />
             </FormControl>
             <FormControl>
+              <FormLabel fontWeight="semibold" fontSize="sm">Primary Location</FormLabel>
+              <Input
+                value={form.prim_location}
+                onChange={(e) => handleChange('prim_location', e.target.value)}
+                bg="blue.50"
+              />
+            </FormControl>
+            <FormControl>
+                <FormLabel fontWeight={"semibold"} fontSize={"sm"}>Primary Phone No:</FormLabel>
+                <Input
+                  value={form.prim_contact_no || ''}
+                  onChange={(e) => handleChange('prim_contact_no', e.target.value)}
+                  bg={"blue.50"}
+                />
+              </FormControl>
+            <FormControl>
+              <FormLabel fontWeight={"semibold"} fontSize={"sm"}>Alternate Phone No:</FormLabel>
+                <Input
+                  value={form.alt_contact_no || ''}
+                  onChange={(e) => handleChange('alt_contact_no', e.target.value)}
+                  bg={"blue.50"}
+                />
+            </FormControl>
+            <FormControl>
+              <FormLabel fontWeight={"semibold"} fontSize={"sm"}>WhatsApp No:</FormLabel>
+                <Input
+                  value={form.whatsapp_mobileno || ''}
+                  onChange={(e) => handleChange('whatsapp_mobileno', e.target.value)}
+                  bg={"blue.50"}
+                />
+            </FormControl>
+            <FormControl>
               <FormLabel fontWeight={"semibold"} fontSize={"sm"}>Email:</FormLabel>
                 <Input
                   value={form.email || ''}
                   onChange={(e) => handleChange('email', e.target.value)}
                   bg={"blue.50"}
                 />
-            </FormControl>  
+            </FormControl> 
+            <FormControl>
+              <FormLabel fontWeight={"semibold"} fontSize={"sm"}>Customer Status:</FormLabel>
+                {/* <Input
+                  value={form.customer_status || ''}
+                  onChange={(e) => handleChange('customer_status', e.target.value)}
+                  bg={"blue.50"}
+                /> */}
+                <Select
+                  placeholder="Customer Status"
+                  value={form.customer_status}
+                  onChange={(e) => handleChange('customer_status', e.target.value)}
+                  size="sm"
+                  bgColor="white"
+                >
+                  <option key={1} value={1}>
+                      {'Active'}
+                    </option>
+                  <option key={2} value={0}>
+                    {'Suspended'}
+                  </option>
+                  {/* {serials.map((item) => (
+                    <option key={item.id} value={item.company_name}>
+                      {item.company_name}
+                    </option>
+                  ))} */}
+                </Select>
+            </FormControl>
+            <FormControl>
+              <FormLabel fontWeight="semibold" fontSize="sm">Contact Person</FormLabel>
+              <Input
+                value={form.contact_person}
+                onChange={(e) => handleChange('contact_person', e.target.value)}
+                bg="blue.50"
+              />
+            </FormControl>
+              <FormControl>
+                <FormLabel fontWeight={"semibold"} fontSize={"sm"}>Contact Person No:</FormLabel>
+                <Input
+                  value={form.contact_person_no || ''}
+                  onChange={(e) => handleChange('contact_person_no', e.target.value)}
+                  bg={"blue.50"}
+                />
+              </FormControl>
           </Stack>
         </DrawerBody>
         <DrawerFooter borderTopWidth="1px">
-          <Button variant="outline" mr={3} onClick={onClose}>
+          <Button variant="outline" mr={3} onClick={onClose} colorScheme="orange">
             Cancel
           </Button>
           <Button

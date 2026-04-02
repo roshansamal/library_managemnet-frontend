@@ -75,7 +75,7 @@ const [form, setForm] = useState<FormValues>({
       console.log(JSON.stringify(form));
       const token = localStorage.getItem('authToken');
       const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
-      const res = await fetch(`${apiUrl}/touradmin/emailupdate`, {
+      const res = await fetch(`${apiUrl}/api/touradmin/emailupdate`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,   // 👈 Bearer token
@@ -84,7 +84,7 @@ const [form, setForm] = useState<FormValues>({
         },
         body: JSON.stringify(form),
       });
-
+      console.log(res.json.toString);
       if (!res.ok) {
         throw new Error('Failed to save employee');
       }
@@ -114,7 +114,7 @@ const [form, setForm] = useState<FormValues>({
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
-        <DrawerHeader color="black">Edit Email</DrawerHeader>
+        <DrawerHeader color="black">Edit Email/Login ID</DrawerHeader>
         <DrawerBody>
           <Stack spacing={4}>
             <FormControl>
