@@ -1,5 +1,9 @@
 // src/pages/FilteredTablePage.tsx
-import { Link, Table } from '@chakra-ui/react';
+import { Flex, Input, Link, Spacer, Table } from '@chakra-ui/react';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 // import {
 //   Select,
 //   useDisclosure,
@@ -15,7 +19,6 @@ import {
   Tr,
   Th,
   Td,
-  Tfoot,
   IconButton,
   Text,
   Select as ChakraSelect,
@@ -29,8 +32,13 @@ import {
   // type SortingState,
   // type Updater,
 } from '@tanstack/react-table';
+import {
+  InputGroup,
+  InputRightElement,
+} from "@chakra-ui/react";
+import { FiDownload, FiSearch } from "react-icons/fi";
 import { FiChevronLeft, FiChevronRight, FiEdit,  } from 'react-icons/fi';
-import {  FaRecycle, FaTrash } from 'react-icons/fa6';
+import { FaRecycle, FaTrash } from 'react-icons/fa6';
 import { useToast } from '@chakra-ui/react';
 import type { EmployeeType } from '../../types/EmployeeType';
 import { FaPlusCircle } from 'react-icons/fa';
@@ -43,58 +51,406 @@ import {
   getCoreRowModel,     // ✅ Always required
   getPaginationRowModel,
 } from '@tanstack/react-table';
-// import axios from 'axios';
-
-// type ApiResponse = {
-//   data: EmployeeType[];
-//   current_page: number;
-//   per_page: number;
-//   total: number;
-// };
-
 const columnHelper = createColumnHelper<EmployeeType>();
 
 export default function Employees() {
-  // const [sorting, setSorting] = useState<SortingState>([]);
+  const [searchText, setSearchText] = useState("");
   const [selectedRow, setSelectedRow] = useState<EmployeeType | null>(null);
-  // const [users, setUsers] = useState<UserOption[]>([]);
-  // const [username, setUsername] = useState('');
   const [selectedIds] = useState<number[]>([]);
-  // const allSelected = data.length > 0 && selectedIds.length === data.length;
   const isSelected = (tourid: number) => selectedIds.includes(tourid);
-  // const [isViewEmpOpen, setIsViewEmpOpen] = useState(false);
   const [isEmpAddOpen, setIsEmpAddOpen] = useState(false);
   const [isEmpEditOpen, setIsEmpEditOpen] = useState(false);
-  // const [isEmpAddClose, setIsEmpAddClose] = useState(false);
-  // const [isEmpEditClose,setIsEmpEditClose] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [rowToDelete, setRowToDelete] = useState<EmployeeType | null>(null);
   const toast = useToast();
   const token = localStorage.getItem('authToken');
-  const pageSize = 10;
-    
+  const [isExporting, setIsExporting] = useState(false);
+  // const [employees, setEmployees] = useState<any[]>([]);
+  
   // ✅ Single pagination state (remove old pageIndex/pageSize)
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
   const [data, setData] = useState<EmployeeType[]>([]);
   const [total, setTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Type Declaration
-  // type UserOption = { userid: string };
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const params = new URLSearchParams({
+        "per_page": "all"
+      });
+      // 1. Fetch ALL data from Laravel specifically for the report
+      const apiUrl = import.meta.env.VITE_API_URL ?? "https://localhost:8000";
+      const res = await fetch(
+        `${apiUrl}/api/touradmin/emp/emplist?${params.toString()}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        },
+      );
 
-  // const closeEditEmpSlider = () => {
-  //   setIsEmpEditClose(true);
-  //   setIsEmpEditOpen(false);
-  //   setSelectedRow(null);
+      const json = await res.json();
+      setData(json.data);
+      setTotal(json.total);
+      setIsLoading(false);
+
+      // 2. Pass the fresh data to your ExcelJS function
+      // Ensure 'response.data' is the array of employees
+      await exportToExcel(json.data, "Full_Employee_Report");
+      
+    } catch (error) {
+      console.error("Export failed", error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleCSV = async () => {
+    setIsExporting(true);
+    try {
+      const params = new URLSearchParams({
+        "per_page": "all"
+      });
+      // 1. Fetch ALL data from Laravel specifically for the report
+      const apiUrl = import.meta.env.VITE_API_URL ?? "https://localhost:8000";
+      const res = await fetch(
+        `${apiUrl}/api/touradmin/emp/emplist?${params.toString()}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        },
+      );
+
+      const json = await res.json();
+      setData(json.data);
+      setTotal(json.total);
+      setIsLoading(false);
+
+      // 2. Pass the fresh data to your ExcelJS function
+      // Ensure 'response.data' is the array of employees
+      await exportToCsv(json.data, "Full_Employee_Report");
+      
+    } catch (error) {
+      console.error("Export failed", error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handlePDF = async () => {
+    setIsExporting(true);
+    try {
+      const params = new URLSearchParams({
+        "per_page": "all"
+      });
+      // 1. Fetch ALL data from Laravel specifically for the report
+      const apiUrl = import.meta.env.VITE_API_URL ?? "https://localhost:8000";
+      const res = await fetch(
+        `${apiUrl}/api/touradmin/emp/emplist?${params.toString()}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        },
+      );
+
+      const json = await res.json();
+      setIsLoading(false);
+
+      // 2. Pass the fresh data to your ExcelJS function
+      // Ensure 'response.data' is the array of employees
+      await exportToPDF(json.data, "employees.pdf");
+      
+    } catch (error) {
+      console.error("Export failed", error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleHtml = async () => {
+    setIsExporting(true);
+    try {
+      const params = new URLSearchParams({
+        "per_page": "all"
+      });
+      // 1. Fetch ALL data from Laravel specifically for the report
+      const apiUrl = import.meta.env.VITE_API_URL ?? "https://localhost:8000";
+      const res = await fetch(
+        `${apiUrl}/api/touradmin/emp/emplist?${params.toString()}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        },
+      );
+
+      const json = await res.json();
+      setIsLoading(false);
+
+      // 2. Pass the fresh data to your ExcelJS function
+      // Ensure 'response.data' is the array of employees
+      await exportHTML(json.data, "employees.html");
+      
+    } catch (error) {
+      console.error("Export failed", error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+
+  const exportToExcel = async (data: any[], fileName: string) => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Main Sheet');
+
+    // 1. Define Columns (This replaces SheetJS auto-headers)
+    worksheet.columns = [
+      { header: 'UserID', key: 'userid', width: 15 },
+      { header: 'Employee Id', key: 'empid', width: 15 },
+      { header: 'Designation', key: 'designation', width: 20 },
+      { header: 'First Name', key: 'first_name', width: 20 },
+      { header: 'Middle Name', key: 'middle_name', width: 12 },
+      { header: 'Last Name', key: 'last_name', width: 15 },
+      { header: 'Mobile No', key: 'mobile_no', width: 20 },
+      { header: 'Department', key: 'department', width: 12 },
+      { header: 'Base Location', key: 'base_location', width: 15 },
+      { header: 'DOB', key: 'dob', width: 20 },
+      { header: 'Marital Status', key: 'marital_status', width: 12 },
+      { header: 'Joining Date', key: 'doj', width: 15 },
+      { header: 'Competency Level', key: 'competency_level', width: 20 },
+      { header: 'Manager', key: 'manager', width: 12 },
+      { header: 'Fixed DA', key: 'fixed_da', width: 15 },
+    ];
+
+    // 2. Add Rows
+    worksheet.addRows(data);
+
+    // 3. (Bonus) Styling - Something SheetJS (free) can't do
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFD3D3D3' }
+    };
+
+    // 4. Generate & Download
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, `${fileName}.xlsx`);
+  };
+
+
+//   const exportCSV = async (rows: any[], fileName: string) => {
+//   const headers = [
+//     'Designation','Empid','Userid','First Name',//'Middle Name','Last Name',
+//                 'Mobile No','Department','Base Location','DOB','Marital Status','DOJ','Level',
+//                 'Manager','Fixed DA'
+//   ];
+
+//   const lines = [
+//     headers.join(','), // header row
+//     ...rows.map((r) =>
+//       [
+//         r.empid,
+//         r.userid,
+//         r.first_name,
+//         r.designation,
+//         r.mobile_no,
+//         r.department,
+//         r.competency_level,
+//         r.manager,
+//         r.fixed_da,
+//         r.base_location,
+//       ]
+//         .map((value) => {
+//           const v = value ?? '';
+//           // Escape " and , for CSV
+//           const s = String(v).replace(/"/g, '""');
+//           return `"${s}"`;
+//         })
+//         .join(','),
+//     ),
+//   ];
+
+//   const csv = lines.join('\r\n');
+//   const blob = new Blob([csv], {
+//     type: 'text/csv;charset=utf-8;',
+//   });
+//   const url = URL.createObjectURL(blob);
+//   const a = document.createElement('a');
+//   a.href = url;
+//   a.download = 'employees.csv';
+//   a.click();
+// };
+
+
+  const exportToPDF = async (rows: any[], fileName: string) => {
+    const doc = new jsPDF('l', 'pt', 'a4'); // or 'p', 'mm', 'a4'
+  const headers = [
+    'Designation','Empid','Userid','First Name',//'Middle Name','Last Name',
+                'Mobile No','Department','Base Location','DOB','Marital Status','DOJ','Level',
+                'Manager','Fixed DA'
+  ];
+
+  const body = rows.map((r) => [
+    r.designation,
+    r.empid,
+    r.userid,
+    r.first_name,
+    r.mobile_no,
+    r.department,
+    r.base_location,
+    r.dob,
+    r.marital_status,
+    r.doj,
+    r.competency_level,
+    r.manager,
+    r.fixed_da,
+  ]);
+
+  autoTable(doc, {
+    head: [headers],
+    body,
+    startY: 40,
+    styles: { fontSize: 8 },
+    headStyles: { fillColor: [55, 65, 81] },
+  });
+
+  doc.save(fileName);
+  };
+
+  // const formatDateForCsv = (date: Date | string) => {
+  //   const d = new Date(date);
+  //   // Returns YYYY-MM-DD which Excel recognizes globally
+  //   return d.toISOString().split('T')[0]; 
   // };
+
+  const exportToCsv = async (rows: any[], fileName: string) => {
+    // 1. Create Workbook & Worksheet
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Export');
+
+    // 2. Define Columns
+    worksheet.columns = [
+      { header: 'UserID', key: 'userid', width: 15 },
+      { header: 'Employee Id', key: 'empid', width: 15 },
+      { header: 'Designation', key: 'designation', width: 20 },
+      { header: 'First Name', key: 'first_name', width: 20 },
+      { header: 'Mobile No', key: 'mobile_no', width: 20 },
+      { header: 'Department', key: 'department', width: 12 },
+      { header: 'Base Location', key: 'base_location', width: 15 },
+      { header: 'DOB', key: 'dob', width: 20 },
+      { header: 'Marital Status', key: 'marital_status', width: 12 },
+      { header: 'Joining Date', key: 'doj', width: 15 },
+      { header: 'Competency Level', key: 'competency_level', width: 20 },
+      { header: 'Manager', key: 'manager', width: 12 },
+      { header: 'Fixed DA', key: 'fixed_da', width: 15 },
+    ];
+
+    worksheet.addRows(rows);
+    // 4. Generate CSV Buffer
+    // ExcelJS handles all the comma escaping and newline logic here
+    const buffer = await workbook.csv.writeBuffer();
+
+    // 5. Trigger Download
+    const blob = new Blob([buffer], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, `${fileName}.csv`);
+  };
+
+  const exportHTML = async (rows: any[], fileName: string) => {
+    const headers = [
+      'Designation',
+      'Empid',
+      'Userid',
+      'First Name',
+      'Mobile No',
+      'Department',
+      'Base Location',
+      'DOB',
+      'Marital Status',
+      'DOJ',
+      'Level',
+      'Manager',
+      'Fixed DA'
+    ];
+
+    const headerRow = `<tr>${headers
+      .map((h) => `<th>${h}</th>`)
+      .join('')}</tr>`;
+
+    const bodyRows = rows
+      .map(
+        (r) =>
+          `<tr>${[
+            r.designation,
+            r.empid,
+            r.userid,
+            r.first_name,
+            r.mobile_no,
+            r.department,
+            r.base_location,
+            r.dob,
+            r.marital_status,
+            r.doj,
+            r.competency_level,
+            r.manager,
+            r.fixed_da,
+          ]
+            .map((value) => `<td>${value ?? ''}</td>`)
+            .join('')}</tr>`,
+      )
+      .join('');
+
+    const html = `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Employees</title>
+    <style>
+      table { border-collapse: collapse; width: 100%; }
+      th, td { border: 1px solid #ccc; padding: 4px 8px; font-size: 12px; }
+      th { background: #f5f5f5; }
+    </style>
+  </head>
+  <body>
+    <table>
+      <thead>${headerRow}</thead>
+      <tbody>${bodyRows}</tbody>
+    </table>
+  </body>
+  </html>
+  `.trim();
+
+    const blob = new Blob([html], {
+      type: 'text/html;charset=utf-8;',
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    a.click();
+  };
+
   function fetchDataAgain(): void {
     handleFetch();
   }
-  // Emp Add
-  // const openEmpAdd = (row: EmployeeType) => {
-  //   setSelectedRow(row);
-  //   setIsEmpAddOpen(true);
-  // };
+
+  const handleSearch = (searchText: string) => {
+      handleFetch({ search: searchText });
+  };
+
   const closeEmpAdd = () => {
     setSelectedRow(null);
     setIsEmpAddOpen(false);
@@ -152,7 +508,7 @@ export default function Employees() {
             <IconButton
               aria-label="Delete"
               icon={<FaTrash />}
-              color={"red"}
+              color={"red.500"}
               size="sm"
               variant="ghost"
               _hover={{bg:"black",textColor:"white"}}
@@ -251,6 +607,7 @@ export default function Employees() {
 
   // ✅ Table uses pagination state
 const table = useReactTable({
+  columnResizeMode: 'onChange', // or 'onEnd'
   data,
   columns,
   state: { pagination },  // ✅ Single source
@@ -258,7 +615,8 @@ const table = useReactTable({
   getCoreRowModel: getCoreRowModel(),
   getPaginationRowModel: getPaginationRowModel(),
   manualPagination: true,
-  pageCount: total ? Math.ceil(total / pagination.pageSize) : -1,
+  // pageCount: total ? Math.ceil(total / pagination.pageSize) : -1,
+  pageCount: total ? Math.ceil(total / pagination.pageSize) : 0, // ✅
 });
   // const { pageIndex, pageSize } = table.getState().pagination;
   // const pageCount = Math.max(Math.ceil(total / pageSize), 1);
@@ -280,41 +638,42 @@ const table = useReactTable({
     }
   }
 
+const handleFetch = useCallback(
+  async (opts?: { search?: string }) => {
+    setIsLoading(true);
 
+    const params = new URLSearchParams({
+      page: (pagination.pageIndex + 1).toString(),
+      per_page: pagination.pageSize.toString(),
+    });
 
-  // ✅ Fetch current page
-const handleFetch = useCallback(async () => {
-  console.log('Fetching page:', pagination.pageIndex + 1);
-  setIsLoading(true);
-  const params = new URLSearchParams({
-    page: (pagination.pageIndex + 1).toString(),
-    per_page: pagination.pageSize.toString(),
-  });
+    if (opts?.search) {
+      params.set("search", opts.search); // or whatever param your API expects
+    }
 
-  const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
-  const res = await fetch(`${apiUrl}/api/touradmin/emp/emplist?${params}`, {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${token}`,   // 👈 Bearer token
-      'Accept': 'application/json',
-    },
-  });
+    const apiUrl = import.meta.env.VITE_API_URL ?? "https://localhost:8000";
+    const res = await fetch(
+      `${apiUrl}/api/touradmin/emp/emplist?${params.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      },
+    );
 
+    const json = await res.json();
+    setData(json.data);
+    setTotal(json.total);
+    setIsLoading(false);
+  },
+  [pagination.pageIndex, pagination.pageSize, token],
+);
 
-  if (!res.ok) throw new Error(await res.text());
-  const json = await res.json();
-  setData(json.data);
-  setTotal(json.total);
-  setIsLoading(false);
-}, [pagination.pageIndex, pagination.pageSize]);
-
-
-// useEffect(() => {
-//   handleFetch();
-// }, [handleFetch]);
 useEffect(() => {
   handleFetch();
-}, []);
+}, [handleFetch]);
 
 // ✅ Table-controlled buttons (REPLACE your manual ones)
 // const canPrev = table.getCanPreviousPage();
@@ -366,33 +725,122 @@ useEffect(() => {
  
   return (
     <>
-    <HStack spacing={2} as="nav" aria-label="Breadcrumb">
-      <Link href="/dashboard" color="blue.500">Admin</Link>
-      <Text color="gray.500">/</Text>
-      <Text fontWeight="medium">Employees</Text>
-      <Button colorScheme="blue" onClick={handleFetch} h={8} fontSize={"sm"} mx={"2"}>
-        <FaRecycle />Refresh
-      </Button>
-      <Button colorScheme="blue" onClick={showAddEmpSlider} h={8} fontSize={"sm"}>
-        <FaPlusCircle />Add Employee
-      </Button>
-    </HStack>
-    <Box borderWidth="1px" borderRadius="md" maxH="500px" overflow="auto" p={1}>
-      {/* Filters */}
-      <HStack spacing={1} mb={1} align="flex-end" justifyContent={"left"}>
-         
+    <Flex
+      direction="column"
+      h="calc(100vh - 80px)" // or "100vh" if this is the whole page
+    >
+    <Flex align="center" as="nav" aria-label="Breadcrumb" w="100%" py={1}>
+      {/* Left Side: Breadcrumbs */}
+      <HStack spacing={1} display={{ base: "none", md: "flex" }}>
+        <Link href="/dashboard" color="blue.500" fontWeight="normal">Admin</Link>
+        <Text color="gray.500">/</Text>
+        <Text fontWeight="normal">Employees</Text>
       </HStack>
+      {/* The Magic: This fills all available space between the two groups */}
+      <Spacer />
+      {/* Right Side: Action Buttons */}
+      <HStack
+        direction={['column', 'row']} // column on mobile, row on md+
+        spacing={1}
+        flexWrap="wrap"              // allow wrapping when needed
+        align="stretch">
+        <InputGroup maxW="200px" size="sm">
+          <Input
+            placeholder="Search employees..."
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            bg="yellow.100"
+          />
+          <InputRightElement width="2.5rem">
+            <IconButton
+              aria-label="Search"
+              size="sm"
+              icon={<FiSearch />}
+              onClick={() => handleSearch(searchText)}
+              variant="ghost"
+            />
+          </InputRightElement>
+        </InputGroup>
+        <Button 
+          leftIcon={<FaRecycle />} 
+          colorScheme="green" 
+          onClick={() => handleFetch()}  // ✅ no args, ignore event
+          h={8} 
+          fontSize="sm"
+        >
+        </Button>
+        <Button
+          leftIcon={<FaPlusCircle />} 
+          colorScheme="blue" 
+          onClick={showAddEmpSlider} 
+          h={8} 
+          fontSize="sm"
+          mr={0}
+        >
+        </Button>
+        {/* <Button size="sm" colorScheme="green" onClick={() => exportToExcel(employees, "Employee_Report")}> */}
+        <Button
+          size="sm" colorScheme="green"
+          isLoading={isExporting} 
+          onClick={handleExport}
+          leftIcon={<FiDownload />}
+        >
+          EXCEL
+        </Button>
+        <Button size="sm" colorScheme="green"
+            isLoading={isExporting} 
+            onClick={handleCSV}
+            leftIcon={<FiDownload />}>
+          CSV
+        </Button>
+        <Button size="sm" colorScheme="green"
+          isLoading={isExporting} 
+          onClick={handleHtml}
+          leftIcon={<FiDownload />}>
+          HTML
+        </Button>
+        <Button
+          size="sm" colorScheme="green"
+          isLoading={isExporting} 
+          onClick={handlePDF}
+          leftIcon={<FiDownload />}
+          >
+            PDF
+        </Button>
+      </HStack>
+    </Flex>
+    <Box borderWidth="1px" borderRadius="md" maxH="500px" overflow="auto" p={0} position="relative">
+      {/* Filters */}
+      {/* <HStack spacing={1} mb={1} align="flex-end" justifyContent={"left"}>
+      </HStack> */}
 
       {/* Table */}
-      <Box overflow="auto">
+      <Box
+        flex="1"             // ✅ fills remaining vertical space
+        
+        // overflowY="auto"
+        // overflowX="auto"
+        // borderWidth="1px"
+        // borderRadius="md"
+        // p={1}
+        position="relative"
+      >
         <Table
           size="sm"
           minW="1200px"
           variant="striped"
           colorScheme="gray"
-          maxH="50vh"
+          //maxH="50vh"
+          //h="100vh"
+          position="relative"
+          maxH="100vh"
+          
         >
-          <Thead bg="gray.700" top={0} zIndex={1}>
+          <Thead bg="gray.700" 
+            top={0} 
+            zIndex={1} 
+            position="sticky"  // ✅ make header sticky
+          >
             {table.getHeaderGroups().map((headerGroup) => (
               <Tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -409,6 +857,9 @@ useEffect(() => {
                       }
                       whiteSpace="nowrap"
                       color="white"
+                      style={{
+                        width: header.getSize(),
+                      }}
                     >
                       {flexRender(
                         header.column.columnDef.header,
@@ -446,92 +897,70 @@ useEffect(() => {
               </Tr>
             ))}
           </Tbody>
-          <Tfoot>
-            <Tr>
-              <Td colSpan={columns.length}>
-                <HStack justify="space-between" align="center">
-                  <HStack>
-                    {/* <IconButton
-                      aria-label="Previous page"
-                      icon={<FiChevronLeft />}
-                      size="sm"
-                      // onClick={() => canPrev && setPageIndex((p) => p - 1)}
-                      onClick={() => table.previousPage()}  // ✅ Table method
-                      isDisabled={!canPrev}
-                      bg={"blue"}
-                      color={"white"}
-                      _hover={{bg:"orange",color:"black"}}
-
-                    />
-                    <IconButton
-                      aria-label="Next page"
-                      icon={<FiChevronRight />}
-                      size="sm"
-                      // onClick={() => canNext && setPageIndex((p) => p + 1)}
-                      onClick={() => table.nextPage()}      // ✅ Table method  
-                      isDisabled={!canNext}
-                      bg={"blue"}
-                      color={"white"}
-                      _hover={{bg:"orange",color:"black"}}
-                    /> */}
-                    <IconButton
-                      aria-label="Previous"
-                      icon={<FiChevronLeft />}
-                      onClick={() => table.previousPage()}  // ✅ Table method
-                      isDisabled={!canPrev}
-                    />
-                    <IconButton
-                      aria-label="Next"
-                      icon={<FiChevronRight />}
-                      onClick={() => table.nextPage()}      // ✅ Table method  
-                      isDisabled={!canNext}
-                    />
-                    <Text fontSize="sm">
-                      {/* Page {pageIndex + 1} of {pageCount} */}
-                      Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-                    </Text>
-                  </HStack>
-                  <HStack>
-                    <Text fontSize="sm">Rows per page:</Text>
-                    {/* <ChakraSelect
-                      size="sm"
-                      width="80px"
-                      value={pageSize}
-                      onChange={(e) => {
-                        setPageSize(Number(e.target.value));
-                        setPageIndex(0);
-                      }}
-                    >
-                      {[10, 20, 50].map((size) => (
-                        <option key={size} value={size}>
-                          {size}
-                        </option>
-                      ))}
-                    </ChakraSelect> */}
-                    
-                    <ChakraSelect
-                      size="sm"
-                      width="80px"
-                      value={pageSize}
-                      onChange={(e) => {
-                        const newSize = Number(e.target.value);
-                        table.setPageSize(newSize);         // ✅ updates pagination.pageSize
-                        table.setPageIndex(0);              // ✅ go back to first page
-                      }}
-                    >
-                      {[10, 20, 50].map((size) => (
-                        <option key={size} value={size}>
-                          {size}
-                        </option>
-                      ))}
-                    </ChakraSelect>
-                    <Text fontSize="sm">Total: {total}</Text>
-                  </HStack>
-                </HStack>
-              </Td>
-            </Tr>
-          </Tfoot>
         </Table>
+        {/* Bottom Area Start */}
+          {/* ✅ Sticky pagination/footer bar */}
+          <HStack
+            justify="space-between"
+            align="center"
+            position="sticky"
+            bottom={0}          // stick to bottom of scroll container
+            bg="white"          // background so rows don't bleed through
+            py={2}
+            mt={2}
+            pl={1}
+            pr={1}
+            zIndex={2}
+          >
+            <HStack>
+              <IconButton
+                aria-label="Previous"
+                icon={<FiChevronLeft />}
+                onClick={() => table.previousPage()}
+                isDisabled={!canPrev}
+                bg="blue.700"
+                color="white"
+                _hover={{ bg: "orange", color: "black" }}
+                size="sm"
+              />
+              <IconButton
+                aria-label="Next"
+                icon={<FiChevronRight />}
+                onClick={() => table.nextPage()}
+                isDisabled={!canNext}
+                bg="blue.700"
+                color="white"
+                _hover={{ bg: "orange", color: "black" }}
+                size="sm"
+              />
+              <Text fontSize="sm">
+                Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+              </Text>
+            </HStack>
+
+            <HStack>
+              <Text fontSize="sm">Rows per page:</Text>
+              <ChakraSelect
+                bg={"yellow.100"}
+                size="sm"
+                width="80px"
+                value={pagination.pageSize}
+                onChange={(e) => {
+                  const newSize = Number(e.target.value);
+                  table.setPageSize(newSize);
+                  table.setPageIndex(0);
+                }}
+              >
+                {[10, 25, 50, 100].map((size) => (
+                  <option key={size} value={size}>
+                    {size}
+                  </option>
+                ))}
+              </ChakraSelect>
+              <Text fontSize="sm">Total: {total}</Text>
+            </HStack>
+          </HStack>
+        {/* Bottom Area End */}
         <TableLoader 
             isLoading={isLoading}
             message="Loading..."
@@ -556,6 +985,7 @@ useEffect(() => {
       onConfirm={handleDeleteConfirm}
     />
     </Box>
+    </Flex>
     </>
   );
 }

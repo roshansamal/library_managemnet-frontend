@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginScreen from './components/LoginScreen';
-import DashboardHome from './pages/DashboardHome';
+// import DashboardHome from './pages/DashboardHome';
 import UsersPage from './pages/UsersPage';
 import DashboardLayout from './components/DashboardLayout';
 import FilteredTablePage from './pages/FilteredTablePage';
@@ -36,6 +36,7 @@ import HmrUpdate from './pages/machine/HmrUpdate';
 import HmrHistory from './pages/machine/HmrHistory';
 import ServicingList from './pages/machine/ServicingList';
 import CallbackRequest from './pages/admin/CallbackRequest';
+import { DashboardHome } from './pages/DashboardHome';
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

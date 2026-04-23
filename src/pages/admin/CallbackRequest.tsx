@@ -144,7 +144,7 @@ export default function CallbackRequest() {
         cell: (info) => info.getValue(),
       }),
       columnHelper.accessor('name', {
-        header: 'Name',
+        header: 'Requested By',
         cell: (info) => info.getValue(),
       }),
       columnHelper.accessor('email', {
@@ -231,11 +231,12 @@ const handleFetch = useCallback(async () => {
   });
 
   if (!res.ok) throw new Error(await res.text());
-  const json = await res.json();
-  setData(json.data);
-  setTotal(json.total);
-  setIsLoading(false);
-}, [pagination.pageIndex, pagination.pageSize]);
+    const json = await res.json();
+    setData(json.data);
+    setTotal(json.total);
+    setIsLoading(false);
+  }, [pagination.pageIndex, pagination.pageSize]
+);
 
 
   // useEffect(() => {
@@ -262,7 +263,7 @@ useEffect(() => {
     try {
       const token = localStorage.getItem('authToken');
       const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
-      const res = await fetch(`${apiUrl}/touradmin/empdelete/${rowToDelete.id}`, {
+      const res = await fetch(`${apiUrl}/api/touradmin/callback-delete/${rowToDelete.id}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -300,11 +301,11 @@ useEffect(() => {
   };
   return (
     <>
-    <Box display="flex" justifyContent="space-between" alignItems="center" >
+    <Box display="flex" justifyContent="space-between" alignItems="center" color={"blue"}>
       <HStack spacing={1} as="nav" aria-label="Breadcrumb">
-        <Link href="/dashboard" fontWeight="normal" color="black" fontSize={"sm"}>Admin</Link>
-        <Text color="gray.500">/</Text>
-        <Text fontWeight="normal" fontSize={"sm"} color="black">Email Update</Text>
+        <Link href="/dashboard" fontWeight="normal" color="blue" fontSize={"sm"}>Admin</Link>
+        <Text color="blue">/</Text>
+        <Text fontWeight="normal" fontSize={"sm"} color="blue">Callback Request</Text>
       </HStack>
       <Button colorScheme="blue" onClick={handleFetch} h={8} fontSize={"sm"} mx={"2"}>
         <FaRecycle /><Spacer width={2}/>Refresh
@@ -453,7 +454,7 @@ useEffect(() => {
                         table.setPageIndex(0);              // ✅ go back to first page
                       }}
                     >
-                      {[10, 20, 50].map((size) => (
+                      {[10, 25, 50,100].map((size) => (
                         <option key={size} value={size}>
                           {size}
                         </option>

@@ -24,9 +24,9 @@ interface LoginScreenProps {
   onLogin?: () => void;
 }
 
-function joinUrl(base: string, path: string) {
-  return `${base.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`;
-}
+// function joinUrl(base: string, path: string) {
+//   return `${base.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`;
+// }
 
 export default function LoginScreen({ onLogin }: LoginScreenProps) {
   const [formData, setFormData] = useState<LoginFormData>({ app_id:'tourbill',email: '', password: '' });
