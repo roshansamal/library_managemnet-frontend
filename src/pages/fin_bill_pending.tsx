@@ -44,7 +44,7 @@ export default function FinPendingBills() {
   const [users, setUsers] = useState<UserOption[]>([]);
   const [selectedUser, setSelectedUser] = useState('');
   // const [isSubmitting, setIsSubmitting] = useState(false);
-  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 50 });
   const [selectedRow, setSelectedRow] = useState<TourBillType | null>(null);
   const openTourEdit = (row: TourBillType) => {
     setSelectedRow(row);
@@ -439,7 +439,8 @@ export default function FinPendingBills() {
     setIsExporting(true);
     try {
       const params = new URLSearchParams({
-        "per_page": "all"
+        "per_page": "all",
+        "ticket_status":"Mgr_Bill_Approved"
       });
       const apiUrl = import.meta.env.VITE_API_URL ?? "https://localhost:8000";
       const res = await fetch(
@@ -1011,7 +1012,7 @@ export default function FinPendingBills() {
             />
         </HStack>
       </Flex>
-      <Box borderWidth="1px" borderRadius="md" maxH="500px" overflow="auto" p={0} position="relative">
+      <Box borderWidth="1px" borderRadius="md" maxH="90vh" overflow="auto" p={0} position="relative">
 
       {/* Table */}
       <Box
@@ -1136,7 +1137,7 @@ export default function FinPendingBills() {
                   table.setPageIndex(0);
                 }}
               >
-                {[10, 25, 50, 100].map((size) => (
+                {[50, 100].map((size) => (
                   <option key={size} value={size}>
                     {size}
                   </option>
