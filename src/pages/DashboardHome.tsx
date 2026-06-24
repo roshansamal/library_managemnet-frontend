@@ -1,6 +1,16 @@
 import { useEffect, useState } from "react";
-import { Box, Container, Heading, SimpleGrid, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Container,
+  Heading,
+  SimpleGrid,
+  Text,
+  Flex,
+  Icon,
+} from "@chakra-ui/react";
+
 import api from "../services/api";
+
 import {
   FiUsers,
   FiBook,
@@ -9,6 +19,7 @@ import {
   FiRotateCcw,
   FiDollarSign,
 } from "react-icons/fi";
+
 import { StatCard } from "../pages/dashboard/StatCard";
 
 export const DashboardHome = () => {
@@ -27,14 +38,15 @@ export const DashboardHome = () => {
 
   const loadDashboard = async () => {
     try {
-      const [users, books, copies, issues, returns, fines] = await Promise.all([
-        api.get("/library-users"),
-        api.get("/library-books"),
-        api.get("/library-book-copies"),
-        api.get("/library-issues"),
-        api.get("/library-returns"),
-        api.get("/library-fines"),
-      ]);
+      const [users, books, copies, issues, returns, fines] =
+        await Promise.all([
+          api.get("/library-users"),
+          api.get("/library-books"),
+          api.get("/library-book-copies"),
+          api.get("/library-issues"),
+          api.get("/library-returns"),
+          api.get("/library-fines"),
+        ]);
 
       setCounts({
         users: users.data?.length || 0,
@@ -45,28 +57,167 @@ export const DashboardHome = () => {
         fines: fines.data?.length || 0,
       });
     } catch (err) {
-      console.error("Dashboard load error:", err);
+      console.error(err);
     }
   };
 
   return (
-    <Box bg="gray.50" minH="100vh" p={4}>
-      <Box bg="white" p={4} mb={4} borderRadius="md">
-        <Heading size="md">📚 Library Dashboard</Heading>
-        <Text fontSize="sm" color="gray.500">
-          Overview of all library modules
+    <Box bg="gray.100" minH="100vh" p={6}>
+      {/* HEADER */}
+      <Box
+        bgGradient="linear(to-r, blue.700, blue.500)"
+        color="white"
+        p={8}
+        borderRadius="xl"
+        mb={8}
+        shadow="lg"
+      >
+        <Heading size="lg">📚 Library Management System</Heading>
+
+        <Text mt={2} fontSize="md">
+          Manage Books, Users, Issues, Returns and Fines
         </Text>
       </Box>
 
-      <Container maxW="container.xl">
-        <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
-          <StatCard label="Users" value={counts.users} icon={FiUsers} colorScheme="blue" />
-          <StatCard label="Books" value={counts.books} icon={FiBook} colorScheme="green" />
-          <StatCard label="Book Copies" value={counts.copies} icon={FiLayers} colorScheme="purple" />
+      {/* WELCOME CARD */}
+      <Box
+        bg="white"
+        p={6}
+        borderRadius="xl"
+        shadow="md"
+        mb={8}
+      >
+        <Heading size="md" mb={2}>
+          Dashboard Overview
+        </Heading>
 
-          <StatCard label="Issues" value={counts.issues} icon={FiClipboard} colorScheme="orange" />
-          <StatCard label="Returns" value={counts.returns} icon={FiRotateCcw} colorScheme="teal" />
-          <StatCard label="Fines" value={counts.fines} icon={FiDollarSign} colorScheme="red" />
+        <Text color="gray.600">
+          Real-time statistics of your library management system.
+        </Text>
+      </Box>
+
+      {/* STATS */}
+      <Container maxW="container.xl" p={0}>
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
+          <Box
+            bg="white"
+            p={6}
+            borderRadius="xl"
+            shadow="md"
+            transition="0.3s"
+            _hover={{
+              transform: "translateY(-5px)",
+              shadow: "xl",
+            }}
+          >
+            <Flex justify="space-between" align="center">
+              <Box>
+                <Text color="gray.500">Users</Text>
+                <Heading size="lg">{counts.users}</Heading>
+              </Box>
+              <Icon as={FiUsers} boxSize={10} color="blue.500" />
+            </Flex>
+          </Box>
+
+          <Box
+            bg="white"
+            p={6}
+            borderRadius="xl"
+            shadow="md"
+            transition="0.3s"
+            _hover={{
+              transform: "translateY(-5px)",
+              shadow: "xl",
+            }}
+          >
+            <Flex justify="space-between" align="center">
+              <Box>
+                <Text color="gray.500">Books</Text>
+                <Heading size="lg">{counts.books}</Heading>
+              </Box>
+              <Icon as={FiBook} boxSize={10} color="green.500" />
+            </Flex>
+          </Box>
+
+          <Box
+            bg="white"
+            p={6}
+            borderRadius="xl"
+            shadow="md"
+            transition="0.3s"
+            _hover={{
+              transform: "translateY(-5px)",
+              shadow: "xl",
+            }}
+          >
+            <Flex justify="space-between" align="center">
+              <Box>
+                <Text color="gray.500">Book Copies</Text>
+                <Heading size="lg">{counts.copies}</Heading>
+              </Box>
+              <Icon as={FiLayers} boxSize={10} color="purple.500" />
+            </Flex>
+          </Box>
+
+          <Box
+            bg="white"
+            p={6}
+            borderRadius="xl"
+            shadow="md"
+            transition="0.3s"
+            _hover={{
+              transform: "translateY(-5px)",
+              shadow: "xl",
+            }}
+          >
+            <Flex justify="space-between" align="center">
+              <Box>
+                <Text color="gray.500">Issues</Text>
+                <Heading size="lg">{counts.issues}</Heading>
+              </Box>
+              <Icon as={FiClipboard} boxSize={10} color="orange.500" />
+            </Flex>
+          </Box>
+
+          <Box
+            bg="white"
+            p={6}
+            borderRadius="xl"
+            shadow="md"
+            transition="0.3s"
+            _hover={{
+              transform: "translateY(-5px)",
+              shadow: "xl",
+            }}
+          >
+            <Flex justify="space-between" align="center">
+              <Box>
+                <Text color="gray.500">Returns</Text>
+                <Heading size="lg">{counts.returns}</Heading>
+              </Box>
+              <Icon as={FiRotateCcw} boxSize={10} color="teal.500" />
+            </Flex>
+          </Box>
+
+          <Box
+            bg="white"
+            p={6}
+            borderRadius="xl"
+            shadow="md"
+            transition="0.3s"
+            _hover={{
+              transform: "translateY(-5px)",
+              shadow: "xl",
+            }}
+          >
+            <Flex justify="space-between" align="center">
+              <Box>
+                <Text color="gray.500">Fines</Text>
+                <Heading size="lg">{counts.fines}</Heading>
+              </Box>
+              <Icon as={FiDollarSign} boxSize={10} color="red.500" />
+            </Flex>
+          </Box>
         </SimpleGrid>
       </Container>
     </Box>
