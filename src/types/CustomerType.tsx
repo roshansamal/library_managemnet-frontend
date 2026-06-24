@@ -2,7 +2,7 @@ export type CustomerType = {
   id: number;
   name: string;
   customer_type: string;
-  prim_location: string;
+  primary_location: string;
   contact_person: string;
   contact_person_no: string;
   prim_contact_no:string;

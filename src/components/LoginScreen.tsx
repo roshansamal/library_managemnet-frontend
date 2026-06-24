@@ -29,68 +29,21 @@ interface LoginScreenProps {
 // }
 
 export default function LoginScreen({ onLogin }: LoginScreenProps) {
-  const [formData, setFormData] = useState<LoginFormData>({ app_id:'tourbill',email: '', password: '' });
+  const [formData, setFormData] = useState<LoginFormData>({ app_id:'nist-feedback',email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   setIsLoading(true);
-
-  //   try {
-  //     const response = await fetch('/api/login', {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify(formData),
-  //       credentials: 'include',
-  //     });
-
-  //     if (response.ok) {
-  //       toast({
-  //         title: 'Login successful!',
-  //         status: 'success',
-  //         duration: 3000,
-  //         isClosable: true,
-  //       });
-        
-  //       onLogin?.();
-  //       // window.location.href = '/dashboard'; // Use if no onLogin prop
-  //     } else {
-  //       toast({
-  //         title: 'Invalid credentials',
-  //         status: 'error',
-  //         duration: 3000,
-  //         isClosable: true,
-  //       });
-  //     }
-  //   } catch (error) {
-  //     toast({
-  //       title: 'Login failed',
-  //       description: 'Check your connection',
-  //       status: 'error',
-  //       duration: 3000,
-  //       isClosable: true,
-  //     });
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-  // src/components/LoginScreen.tsx - Replace handleSubmit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:8000';
-      // await fetch(`${apiUrl}/sanctum/csrf-cookie`,{
-      //   credentials: 'include',
-      // });
-       const response = await fetch(`${apiUrl}/api/login`,
-       //const response = await fetch(joinUrl(apiUrl, '/api/login'),
+      console.log(JSON.stringify(formData));
+      const apiUrl = import.meta.env.VITE_API_URL ?? 'https://localhost:5000';
+      const response = await fetch(`${apiUrl}/api/auth/login`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          //credentials: 'include',  // if using Sanctum cookies
           body: JSON.stringify(formData),
         }
       );
@@ -136,10 +89,9 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
     <Flex minH="100vh" align="center" justify="center" bg="gray.50" p={4}>
       <Box bg="white" p={8} rounded="lg" shadow="lg" maxW="md" w="full">
         <Stack spacing={6}>
-          <Heading size="lg" textAlign="center" color="gray.800">
+          <Heading size="lg" textAlign="center" color="gray.500">
             Admin Login
           </Heading>
-          
           <form onSubmit={handleSubmit}>
             <Stack spacing={4}>
               <FormControl id="app_id" isRequired hidden>
@@ -160,7 +112,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="admin@example.com"
-                  focusBorderColor="blue.400"
+                  focusBorderColor="red.400"
                   autoComplete="email"
                 />
               </FormControl>

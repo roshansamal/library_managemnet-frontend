@@ -68,7 +68,7 @@ export default function Employees() {
   // const [employees, setEmployees] = useState<any[]>([]);
   
   // ✅ Single pagination state (remove old pageIndex/pageSize)
-  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 50 });
   const [data, setData] = useState<EmployeeType[]>([]);
   const [total, setTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -749,13 +749,15 @@ useEffect(() => {
             placeholder="Search employees..."
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            bg="yellow.100"
+            bg="white"
           />
           <InputRightElement width="2.5rem">
             <IconButton
               aria-label="Search"
               size="sm"
               icon={<FiSearch />}
+              color={"red"}
+              // bgColor={"blue"}
               onClick={() => handleSearch(searchText)}
               variant="ghost"
             />
@@ -809,20 +811,9 @@ useEffect(() => {
         </Button>
       </HStack>
     </Flex>
-    <Box borderWidth="1px" borderRadius="md" maxH="500px" overflow="auto" p={0} position="relative">
-      {/* Filters */}
-      {/* <HStack spacing={1} mb={1} align="flex-end" justifyContent={"left"}>
-      </HStack> */}
-
-      {/* Table */}
+      <Box borderWidth="1px" borderRadius="md" overflow="auto" p={0} position="relative" h="100%" flex={1}>
       <Box
         flex="1"             // ✅ fills remaining vertical space
-        
-        // overflowY="auto"
-        // overflowX="auto"
-        // borderWidth="1px"
-        // borderRadius="md"
-        // p={1}
         position="relative"
       >
         <Table
@@ -905,7 +896,7 @@ useEffect(() => {
             align="center"
             position="sticky"
             bottom={0}          // stick to bottom of scroll container
-            bg="white"          // background so rows don't bleed through
+            bg="gray.200"          // background so rows don't bleed through
             py={2}
             mt={2}
             pl={1}
